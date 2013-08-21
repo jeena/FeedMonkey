@@ -1,5 +1,6 @@
 img {
 		max-width: 100%;
+		height: auto;
 }
 
 #full header *, #full2 header * {
@@ -32,3 +33,5 @@ img {
 
 .smallogo { text-align: center; margin: 0; padding: 0; }
 .smallogo img { width: 50%; }
+
+.count { font-size: 0.8em; padding-top: 0.6em; padding-right: 0.2em; text-shadow: 0 0 2px black; }

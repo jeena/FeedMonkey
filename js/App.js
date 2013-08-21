@@ -14,7 +14,7 @@ function App() {
 	$("#full").bind("taphold", this.setCurrentUnread.bind(this));
 
 	$(".back").on("vclick", this.setCurrentRead.bind(this));
-	$(".count").button();
+	//$(".count").button();
 
 	var _this = this;
 	var aop = function(event, ui) { setTimeout(function() { $("#popup").popup("close") }, 2000) };
@@ -67,7 +67,7 @@ App.prototype.populateList = function() {
 
 	ul.listview("refresh");
 
-	//$(".count").html(this.unread_articles.length + " / " + this.unread_articles.length);
+	$(".count").html(this.unread_articles.length + " / " + this.unread_articles.length);
 	//$(".count").button("refresh");
 };
 
@@ -84,7 +84,7 @@ App.prototype.updateList = function() {
 
 	//$("#list ul").listview("refresh");
 
-	//$(".count").html(unread + " / " + this.unread_articles.length);
+	$(".count").html(unread + " / " + this.unread_articles.length);
 	//$(".count").button("refresh");
 };
 
@@ -142,7 +142,7 @@ App.prototype.setCurrentRead = function() {
 		article.unread = false;
 		this.updateList();
 		var _this = this;
-		setTimeout(function() { this.ttrss.setArticleRead(article.id); }, 500);
+		setTimeout(function() { _this.ttrss.setArticleRead(article.id); },100);
 	}
 
 	article.set_unread = false;
@@ -152,9 +152,10 @@ App.prototype.setCurrentUnread = function() {
 	var article = this.unread_articles[this.currentIndex];
 	article.unread = true;
 	article.set_unread = true;
-	this.ttrss.setArticleUnread(article.id);
 	this.updateList();
 	$("#popup").popup("open");
+	var _this = this;
+	setTimeout(function() { _this.ttrss.setArticleUnread(article.id); }, 100);
 };
 
 App.prototype.goToList = function() {

@@ -2,7 +2,33 @@ function TinyTinyRSS(app, server_url, session_id) {
 	this.app = app;
 	this.server_url = server_url;
 	this.session_id = session_id;
+
+	window.addEventListener("offline", this.onoffline.bind(this));
+	window.addEventListener("online", this.ononline.bind(this));
 }
+
+TinyTinyRSS.prototype.onoffline = function() {
+	// Do nothing
+};
+
+TinyTinyRSS.prototype.ononline = function() {
+	var read_articles = localStorage.read_articles;
+	if (typeof read_articles !== "undefined") {
+		read_articles = JSON.parse(localStorage.read_articles);
+		this.setArticleRead(read_articles.join(","), function() {
+			debug(read_articles)
+			localStorage.read_articles = null;
+		});
+	}
+
+	var unread_articles = localStorage.unread_articles;
+	if (unread_articles) {
+		unread_articles = JSON.parse(unread_articles);
+		this.setArticleUnread(unread_articles.join(","), function() {
+			localStorage.unread_articles();
+		});		
+	}
+};
 
 TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
 	if(!navigator.onLine) {
@@ -58,7 +84,14 @@ TinyTinyRSS.prototype.setArticleRead = function(article_id) {
 		field: 2
 	};
 
-	this.doOperation("updateArticle", options);
+	if (navigator.onLine) this.doOperation("updateArticle", options);
+	else {
+		var read_articles = localStorage.read_articles;
+		if(typeof read_articles !== "undefined") read_articles = JSON.parse(read_articles);
+		else read_articles = [];
+		read_articles.push(article_id);
+		localStorage.read_articles = JSON.stringify(read_articles);
+	}
 };
 
 TinyTinyRSS.prototype.setArticleUnread = function(article_id) {
@@ -68,7 +101,14 @@ TinyTinyRSS.prototype.setArticleUnread = function(article_id) {
 		field: 2
 	};
 
-	this.doOperation("updateArticle", options);
+	if (navigator.onLine) this.doOperation("updateArticle", options);
+	else {
+		var unread_articles = localStorage.unread_articles;
+		if (typeof unread_articles !== "undefined") unread_articles = JSON.parse(unread_articles);
+		else unread_articles = [];
+		unread_articles.push(article_id);
+		localStorage.unread_articles = JSON.stringify(unread_articles);
+	}
 };
 
 TinyTinyRSS.prototype.logOut = function() {
