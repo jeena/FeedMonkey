@@ -1,0 +1,21 @@
+{
+  "name": "Feedthemonkey",
+  "description": "A TinyTinyRSS mobile client.",
+  "launch_path": "index.html",
+  "icons": {
+    "58": "/img/icon-58.png",
+    "60": "/img/icon-60.png",
+    "128": "/img/icon-128.png"
+  },
+  "developer": {
+    "name": "Jabs Nu",
+    "url": "http://jabs.nu"
+  },
+  "default_locale": "en",
+  "type": "privileged",
+  "permissions": {
+    "systemXHR": {}
+  },
+  "installs_allowed_from": ["*"],
+  "version": "0.1"
+}

@@ -1,0 +1,34 @@
+img {
+		max-width: 100%;
+}
+
+#full header *, #full2 header * {
+	margin: 0;
+	padding: 0;
+}
+
+#full header, #full2 header {
+	border-bottom: 1px solid #aaa;
+	margin-bottom: 1em;
+	padding-bottom: 1em;
+}
+
+#full h1, #full2 h1 {
+	font-weight: normal;
+	font-size: 1.2em;
+}
+
+#full h1 a, #full2 h1 a {
+	text-decoration: none;
+}
+
+#list .ui-li-heading {
+	font-weight: normal;
+}
+
+#list .unread .ui-li-heading {
+	font-weight: bold;
+}
+
+.smallogo { text-align: center; margin: 0; padding: 0; }
+.smallogo img { width: 50%; }

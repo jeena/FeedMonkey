@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <title>Feedthemonkey</title>
+  <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
+  
+  <!-- Extra Codiqa features -->
+  <link rel="stylesheet" href="css/screen.css" />
+  
+  <!-- jQuery and jQuery Mobile -->
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/jquery.mobile-1.3.1.js"></script>
+
+  <!-- Extra Codiqa features -->
+  <script src="js/codiqa.ext.js"></script>
+
+  <script src="js/App.js"></script>
+  <script src="js/TinyTinyRSS.js"></script>
+  <script src="js/Login.js"></script>
+  <script src="js/application.js"></script>
+   
+</head>
+<body>
+
+<div data-role="page" id="list">
+    <div data-theme="a" data-role="header">
+        <a data-role="button" href="#list" data-icon="refresh" data-iconpos="right" class="ui-btn-left" id="reload">
+            Reload
+        </a>
+        <h3>
+            Feedthemonkey
+        </h3>
+        <span class="ui-btn-right count" data-theme="a">0 / 0</span>
+    </div>
+    <div data-role="content">
+        <ul data-role="listview" data-inset="false">
+            <li><a href="#full">Loading ...</a></li>
+        </ul>
+    </div>
+</div>
+
+<div data-role="page" id="login" data-close-btn="none">
+    <div data-theme="a" data-role="header" data-close-btn="none">
+        <h3>
+            Please log in
+        </h3>
+    </div>
+    <div data-role="content">
+      <form>
+        <div>
+          <p class="smallogo"><img src="img/splash.png" alt=""></p>
+
+              <label for="url" class="ui-hidden-accessible">URL:</label>
+              <input type="text" name="url" id="url" value="" placeholder="http://example.com/tt-rss/" data-theme="a" />
+
+              <label for="un" class="ui-hidden-accessible">Username:</label>
+              <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a" />
+
+              <label for="pw" class="ui-hidden-accessible">Password:</label>
+              <input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a" />
+
+            <button type="submit" data-theme="b">Sign in</button>
+        </div>
+      </form>
+  </div>
+</div>
+
+<div data-role="page" id="full">
+  <div data-theme="a" data-role="header">
+    <a data-role="button" data-transition="slide" data-direction="reverse" href="#list"
+        data-icon="home" data-iconpos="left" class="ui-btn-left back">
+            List
+    </a>
+    <h3 class="feed_title"></h3>
+    <span class="ui-btn-right count" data-theme="a">0 / 0</span>
+  </div>
+  <div data-role="content">
+	  <header>
+      <p><span class="feed_title"></span> <span class="author"></span></p>
+			<h1><a class="title" href="" target="_blank"></a></h1>
+			<p><timedate class="date"></timedate></p>
+		</header>
+		<article class="article"></article>
+  </div>
+
+  <div data-role="popup" id="popup" class="ui-content">
+    <p><span>✔</span> set unread</p>
+  </div>
+</div>
+
+</body>
+</html>
