@@ -16,7 +16,6 @@ TinyTinyRSS.prototype.ononline = function() {
 	if (typeof read_articles !== "undefined") {
 		read_articles = JSON.parse(localStorage.read_articles);
 		this.setArticleRead(read_articles.join(","), function() {
-			debug(read_articles)
 			localStorage.read_articles = null;
 		});
 	}
