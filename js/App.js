@@ -14,7 +14,6 @@ function App() {
 	$("#full").bind("taphold", this.setCurrentUnread.bind(this));
 
 	$(".back").on("vclick", this.setCurrentRead.bind(this));
-	//$(".count").button();
 
 	var _this = this;
 	var aop = function(event, ui) { setTimeout(function() { $("#popup").popup("close") }, 2000) };
