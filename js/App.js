@@ -35,8 +35,29 @@ function App() {
 			_this.showFull(_this.unread_articles[i]);
 		} else if(url == "#unread") {
 			_this.setCurrentUnread();
+		} else if(url == "#logout") {
+			_this.logout();
+		} else if(url == "#reset-info") {
+			alert("Info bubbles will be shown again.")
+			$$(".info").forEach(function(o) {
+				o.removeClass("hidden");
+			});
 		}
+
+		// this is here so you can tap on a button more then once
+		// and it will still call onhashchange
+		window.location.hash = "#";
 	}
+
+	$(".info.swipe").ontouchend = function(e) {
+		localStorage.info_swipe = true;
+		$(".info.swipe").addClass("hidden");
+	};
+
+	if(localStorage.info_swipe) {
+		$(".info.swipe").addClass("hidden");
+	}
+
 };
 
 App.prototype.authenticate = function() {
@@ -48,6 +69,13 @@ App.prototype.after_login = function() {
 
 	this.ttrss = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
 	this.reload();
+};
+
+App.prototype.logout = function() {
+	this.ttrss.logOut();
+	this.unread_articles = [];
+	this.populateList();
+	this.login.log_out();
 };
 
 App.prototype.changeToPage = function(page) {
@@ -195,6 +223,13 @@ App.prototype.showFull = function(article, slide_back) {
 		$(page_id + " .author").innerHTML = "&ndash; " + article.author;
 
 	$(page_id + " .article").innerHTML = article.content;
+
+	if(article.set_unread) {
+		$("#setunread").innerHTML = "✔ unread";
+	} else {
+		$("#setunread").innerHTML = "Set unread";
+	}
+
 };
 
 App.prototype.showNext = function() {
@@ -238,6 +273,8 @@ App.prototype.setCurrentUnread = function() {
 	this.updateList();
 	var _this = this;
 	setTimeout(function() { _this.ttrss.setArticleUnread(article.id); }, 100);
+
+	$("#setunread").innerHTML = "✔ unread";
 };
 
 App.prototype.goToList = function() {

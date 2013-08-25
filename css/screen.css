@@ -63,6 +63,10 @@ label {
 	display: none;
 }
 
+.hidden {
+	display: none;
+}
+
 section {
 	display: none;
 }
@@ -195,6 +199,23 @@ canvas {
 
 #full .article a {
 	text-decoration: underline;
+}
+
+.info {
+	border: 3px solid black;
+	background: white;
+	border-radius: 10px;
+	box-shadow: 0 0 5px black;
+	color: black;
+	padding: 0 1em;
+}
+
+.info.swipe {
+	width: 60%;
+	position: absolute;
+	top: 50%;
+	left: 15%;
+	margin: auto;
 }
 
 #settings ul {

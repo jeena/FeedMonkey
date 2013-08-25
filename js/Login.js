@@ -53,6 +53,10 @@ Login.prototype.authenticate = function(e) {
 			localStorage.server_url = server_url;
 			localStorage.session_id = data.session_id;
 			_this.app.after_login();
+			
+			$("#url").value = "";
+			$("#un").value = "";
+			$("#pw").value = "";
 		}
 	});
 
@@ -60,8 +64,8 @@ Login.prototype.authenticate = function(e) {
 };
 
 Login.prototype.log_out = function() {
-	localStorage.server_url = null;
-	localStorage.session_id = null;
-	localStorage.unread_articles = null;
+	localStorage.removeItem("server_url");
+	localStorage.removeItem("session_id");
+	localStorage.removeItem("unread_articles");
 	this.log_in();
 }
