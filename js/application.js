@@ -5,35 +5,34 @@ function debug(obj) {
 	alert(obj)
 }
 
-// Handle login stuff if needed
-$(document).on("pageshow", function() {
-	if(!window.app) window.app = new App();
+function $(obj) {
+	if(typeof obj == "string") return document.querySelector(obj);
+	else return obj;
+}
+
+function $$(obj) {
+	if(typeof obj == "string") return document.querySelectorAll(obj);
+	else return new NodeList(obj);
+}
+
+Object.getOwnPropertyNames(Array.prototype).forEach(function(methodName) {
+    NodeList.prototype[methodName] = Array.prototype[methodName];
 });
 
-// Listen for any attempts to call changePage().
-$(document).bind( "pagebeforechange", function( e, data ) {
+Node.prototype.hasClass = function(cls) {
+	return this.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+};
 
-	// We only want to handle changePage() calls where the caller is
-	// asking us to load a page by URL.
-	if ( typeof data.toPage === "string" ) {
+Node.prototype.addClass = function(cls) {
+	if (!this.hasClass(cls)) this.className += " " + cls;
+};
 
-		// We are being asked to load a page by URL, but we only
-		// want to handle URLs that request the data for a specific
-		// category.
-		var u = $.mobile.path.parseUrl( data.toPage ),
-			re = /^#full-/;
-
-		if ( u.hash.search(re) !== -1 ) {
-
-			// We're being asked to display the items for a specific category.
-			// Call our internal method that builds the content for the category
-			// on the fly based on our in-memory category data structure.
-			var i = parseInt(u.hash.split("-")[1], 10);
-			app.showFull(app.unread_articles[i], false);
-
-			// Make sure to tell changePage() we've handled this call so it doesn't
-			// have to do anything.
-			e.preventDefault();
-		}
+Node.prototype.removeClass = function(cls) {
+	if (this.hasClass(cls)) {
+		var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+		this.className = this.className.replace(reg,' ');
 	}
-});
+};
+
+if(!window.app) window.app = new App();
+

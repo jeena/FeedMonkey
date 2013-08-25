@@ -7,85 +7,87 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <title>FeedMonkey</title>
   
-  <link rel="stylesheet" href="css/jquery.mobile.css" />
   <link rel="stylesheet" href="css/screen.css" />
-  
-  <script src="js/jquery.js"></script>
-  <script src="js/jquery.mobile.js"></script>
 
   <script src="js/App.js"></script>
   <script src="js/TinyTinyRSS.js"></script>
-  <script src="js/Login.js"></script>
-  <script src="js/application.js"></script>
-   
+  <script src="js/Login.js"></script> 
+  <script src="js/jester.js"></script>
 </head>
 <body>
 
-<div data-role="page" id="list">
-    <div data-theme="a" data-role="header">
-        <a data-role="button" href="#list" data-icon="refresh" data-iconpos="right" class="ui-btn-left" id="reload">
-            Reload
-        </a>
-        <h3>
-            FeedMonkey
-        </h3>
-        <span class="ui-btn-right count" data-theme="a">0 / 0</span>
-    </div>
-    <div data-role="content">
-        <ul data-role="listview" data-inset="false">
-            <li><a href="#full">Loading ...</a></li>
-        </ul>
-    </div>
-</div>
+<section id="list" class="active">
+  <article>
+    <ul></ul>
+  </article>
+  <footer class="bar">
+    <a class="button" href="#reload">Reload</a>
+    <a class="button" href="#settings">Settings</a>
+    <canvas></canvas>
+  </footer>
+</section>
 
-<div data-role="page" id="login" data-close-btn="none">
-    <div data-theme="a" data-role="header" data-close-btn="none">
-        <h3>
-            Please log in
-        </h3>
-    </div>
-    <div data-role="content">
-      <form>
-        <div>
-          <p class="smallogo"><img src="img/splash.png" alt=""></p>
+<section id="settings">
+  <header class="bar">
+    <a class="button" href="#list">Back</a>
+  </header>
+  <article>
+    <ul>
+      <li><a href="#logout" class="button">Log out</a></li>
+      <li><a href="#reset-info" class="button">View those info bubbles again</a></li>
+      <li><a href="#color-white" class="color-white button">White colors</a></li>
+      <li><a href="#color-blue" class="color-blue button">Blue colors</a></li>
+      <li><a href="#color-yellow" class="color-yellow button">Yellow colors</a></li>
+      <li><a href="#color-red" class="color-red button">Red colors (default)</a></li>
+    </ul>
+  </article>
+</section>
 
-              <label for="url" class="ui-hidden-accessible">URL:</label>
-              <input type="text" name="url" id="url" value="" placeholder="http://example.com/tt-rss/" data-theme="a" />
+<section id="login">
+  <header class="bar">
+    <h1>Please log in</h1>
+  </header>
+  <article>
+    <form>
+      <p class="smallogo">
+        <img src="img/splash.png" alt="Logo, an ape head">
+      </p>
+      <p>
+        <label for="url">URL:</label>
+        <input class="button" type="text" name="url" id="url" value="" placeholder="http://example.com/tt-rss/" />
+      </p>
+      <p>
+        <label for="un">Username:</label>
+        <input class="button" type="text" name="user" id="un" value="" placeholder="username" />          
+      </p>
+      <p>
+        <label for="pw">Password:</label>
+        <input class="button" type="password" name="pass" id="pw" value="" placeholder="password" />          
+      </p>
+      <p>
+        <button class="button" type="submit">Sign in</button>
+      </p>
+    </form>
+  </article>
+</section>
 
-              <label for="un" class="ui-hidden-accessible">Username:</label>
-              <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a" />
-
-              <label for="pw" class="ui-hidden-accessible">Password:</label>
-              <input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a" />
-
-            <button type="submit" data-theme="b">Sign in</button>
-        </div>
-      </form>
-  </div>
-</div>
-
-<div data-role="page" id="full">
-  <div data-theme="a" data-role="header">
-    <a data-role="button" data-transition="slide" data-direction="reverse" href="#list"
-        data-icon="home" data-iconpos="left" class="ui-btn-left back">
-            List
-    </a>
-    <h3 class="feed_title"></h3>
-    <span class="ui-btn-right count" data-theme="a">0 / 0</span>
-  </div>
-  <div data-role="content">
+<section id="full">
+  <header class="bar">
+    <a class="button" href="#list">Back</a>
+    <a class="button" href="#unread">Set unread</a>
+    <canvas></canvas>
+  </header>
+  <article>
 	  <header>
       <p><span class="feed_title"></span> <span class="author"></span></p>
 			<h1><a class="title" href="" target="_blank"></a></h1>
 			<p><timedate class="date"></timedate></p>
 		</header>
-		<article class="article"></article>
-  </div>
+		<div class="article"></div>
+  <article>
+</section>
 
-  <div data-role="popup" id="popup" class="ui-content">
-    <p><span>✔</span> set unread</p>
-  </div>
-</div>
+<script src="js/application.js"></script>
 
 </body>
 </html>

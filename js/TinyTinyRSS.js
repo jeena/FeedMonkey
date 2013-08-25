@@ -48,7 +48,6 @@ TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
 	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState == 4) {
-			$.mobile.loading("hide");
 			if(xhr.status == 200) {
 				if(callback)
 					callback(JSON.parse(xhr.responseText).content);
@@ -61,7 +60,6 @@ TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
 	}
 	xhr.open("POST", url, true);
 	xhr.send(JSON.stringify(options));
-	$.mobile.loading("show");
 }
 
 TinyTinyRSS.prototype.getUnreadFeeds = function(callback, skip) {
@@ -122,7 +120,6 @@ TinyTinyRSS.login = function(server_url, user, password, callback) {
 	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState == 4) {
-			$.mobile.loading("hide");
 			if(xhr.status == 200) {
 				callback(JSON.parse(xhr.responseText).content)
 			} else {
@@ -132,5 +129,4 @@ TinyTinyRSS.login = function(server_url, user, password, callback) {
 	}
 	xhr.open("POST", url, true);
 	xhr.send(JSON.stringify(options));
-	$.mobile.loading("show");
 }

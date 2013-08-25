@@ -1,37 +1,236 @@
-img {
-		max-width: 100%;
-		height: auto;
-}
-
-#full header *, #full2 header * {
+html, body {
 	margin: 0;
 	padding: 0;
+	min-height: 100%;
+	font-family: FeuraSans, sans-serif;
 }
 
-#full header, #full2 header {
-	border-bottom: 1px solid #aaa;
-	margin-bottom: 1em;
-	padding-bottom: 1em;
-}
+.red    { background: #e74c3c; color: #ecf0f1; }
+.white  { background: #ecf0f1; color: #2c3e50; }
+.blue   { background: #3498db; color: #ecf0f1; }
+.yellow { background: #f1c40f; color: #2c3e50; }
 
-#full h1, #full2 h1 {
-	font-weight: normal;
-	font-size: 1.2em;
-}
-
-#full h1 a, #full2 h1 a {
+a {
+	outline: none;
 	text-decoration: none;
 }
 
-#list .ui-li-heading {
-	font-weight: normal;
+.red    a { color: #ecf0f1; }
+.white  a { color: #2c3e50; }
+.blue   a { color: #ecf0f1; }
+.yellow a { color: #2c3e50; }
+
+.button {
+	outline: none;
+	display: block;
+	width: 100%;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border: none;
+	padding: 10px;
+	border-radius: 0;
+	font-size: 1em;
 }
 
-#list .unread .ui-li-heading {
-	font-weight: bold;
+header .button, footer .button {
+	width: auto;
+	display: inline-block;
 }
+
+.red    .button { background: #c0392b; color: #ecf0f1; }
+.white  .button { background: #bdc3c7; color: #2c3e50; }
+.blue   .button { background: #2980b9; color: #ecf0f1; }
+.yellow .button { background: #f39c12; color: #2c3e50; }
+
+.red    .bar .button { background: #e74c3c; color: #ecf0f1; }
+.white  .bar .button { background: #ecf0f1; color: #2c3e50; }
+.blue   .bar .button { background: #3498db; color: #ecf0f1; }
+.yellow .bar .button { background: #f1c40f; color: #2c3e50; }
 
 .smallogo { text-align: center; margin: 0; padding: 0; }
 .smallogo img { width: 50%; }
 
-.count { font-size: 0.8em; padding-top: 0.6em; padding-right: 0.2em; text-shadow: 0 0 2px black; }
+button:active, a:active. .button:active {
+	background: black;
+	color: white;
+}
+
+#login article, #settings article {
+	padding: 10px 20px;
+}
+
+label {
+	display: none;
+}
+
+section {
+	display: none;
+}
+
+section.active {
+	display: block;
+}
+
+section > header {
+	background: #c0392b;
+	text-align: left;
+	padding: 10px;
+}
+
+.red    .bar { background: #c0392b; }
+.white  .bar { background: #bdc3c7; }
+.blue   .bar { background: #2980b9; }
+.yellow .bar { background: #f39c12; }
+
+section > header h1 {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	font-weight: lighter;
+}
+
+.bar {
+	margin: 0;
+	padding: 10px;
+	display: block;
+	overflow: auto;
+}
+
+section > footer {
+	padding: 10px;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+canvas {
+	width: 80px;
+	height: 40px;
+	float: right;
+}
+
+#list ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#list article {
+	padding-bottom: 70px;
+}
+
+#list p {
+	margin: 0;
+	padding: 0;
+	font-size: 0.8em;
+}
+
+#list p {
+	font-weight: normal;
+	text-overflow: ellipsis;
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#list h2 {
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+	font-size: 1.1em;
+}
+
+#list li {
+	position: relative;
+}
+
+#list li:after {
+	content: "›";
+	position: absolute;
+	right: 10px;
+	top: 0.1em;
+	font-weight: 100;
+	font-size: 3em;
+	font-family: "Open Sans";
+}
+
+#list li > a {
+	display: block;
+	padding: 5px 25px 5px 10px;
+	text-decoration: none;
+	outline: none;
+}
+
+#list .unread h2 {
+	font-weight: normal;
+}
+
+#full > article {
+	padding: 0 10px;
+}
+
+#full h1 {
+	font-size: 1.3em;
+	font-weight: normal;
+	margin: 0;
+	padding: 0;
+}
+
+#full h1 a {
+	text-decoration: none;
+}
+
+#full blockquote {
+	margin: 0;
+	padding: 0 1em;
+	font-style: italic;
+}
+
+#full .article a {
+	text-decoration: underline;
+}
+
+#settings ul {
+	list-style-type: none;
+	padding-left: 0;
+	margin-left: 0;
+}
+
+#settings li {
+	margin-bottom: 10px;
+}
+
+#settings ul a.color-red {
+	background: #e74c3c;
+	border: 20px solid #c0392b;
+	border-width: 1px 20px 1px 1px;
+	color: #ecf0f1;
+}
+
+#settings ul a.color-white {
+	background: #ecf0f1;
+	border: 20px solid #bdc3c7;
+	border-width: 1px 20px 1px 1px;
+	color: #2c3e50;
+}
+
+#settings ul a.color-blue {
+	background: #3498db;
+	border: 20px solid #2980b9;
+	border-width: 1px 20px 1px 1px;
+	color: #ecf0f1;
+}
+
+#settings ul a.color-yellow {
+	background: #f1c40f;
+	border: 20px solid #f39c12;
+	border-width: 1px 20px 1px 1px;
+	color: #2c3e50;
+}

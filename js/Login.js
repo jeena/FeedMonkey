@@ -17,14 +17,18 @@ Login.prototype.is_logged_in = function() {
 };
 
 Login.prototype.log_in = function() {
-	$.mobile.changePage("#login", { role: "dialog", transition: "flip", "close-btn": "none" });
-	$("#login form").on('submit', this.authenticate.bind(this));
+	this.app.changeToPage("#login");
+	$("#login form").addEventListener('submit', this.authenticate.bind(this));
 };
 
 Login.prototype.authenticate = function(e) {
-	var server_url = $(e.target).find("#url").val();
-	var user = $(e.target).find("#un").val();
-	var password = $(e.target).find("#pw").val();
+	// do not reload page
+	e.preventDefault();
+ 	e.stopPropagation();
+
+	var server_url = $("#url").value;
+	var user = $("#un").value;
+	var password = $("#pw").value;
 
 	if(!this.onLine()) {
 		alert("You need to be on line to log in to your server.");
