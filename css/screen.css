@@ -172,8 +172,8 @@ canvas {
 	outline: none;
 }
 
-#list .unread h2 {
-	font-weight: normal;
+#list li.unread:after {
+	font-weight: bold;
 }
 
 #full > article {

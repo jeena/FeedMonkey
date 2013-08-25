@@ -49,6 +49,7 @@ function App() {
 		window.location.hash = "#";
 	}
 
+	// FIXME move that code somewhere else
 	$(".info.swipe").ontouchend = function(e) {
 		localStorage.info_swipe = true;
 		$(".info.swipe").addClass("hidden");
@@ -219,8 +220,9 @@ App.prototype.showFull = function(article, slide_back) {
 
 	$(page_id + " .feed_title").innerHTML = article.feed_title;
 
+	$(page_id + " .author").innerHTML = "";
 	if(article.author && article.author.length > 0)
-		$(page_id + " .author").innerHTML = "&ndash; " + article.author;
+		$(page_id + " .author").innerHTML = "&ndash; " + article.author; 
 
 	$(page_id + " .article").innerHTML = article.content;
 
