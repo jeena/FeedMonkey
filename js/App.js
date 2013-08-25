@@ -143,7 +143,7 @@ App.prototype.populateList = function() {
 		html_str += "<strong>" + article.feed_title + "</strong>";
 		html_str += "</p>";
 		html_str += "<h2>" + article.title + "</h2>";
-		html_str += "<p class='excerpt'>" + article.excerpt + "</p>";
+		if(article.excerpt)	html_str += "<p class='excerpt'>" + article.excerpt + "</p>";
 		html_str += "</a></li>";
 	}
 	
