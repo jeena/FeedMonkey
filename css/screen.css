@@ -255,3 +255,7 @@ canvas {
 	border-width: 1px 20px 1px 1px;
 	color: #2c3e50;
 }
+
+#settings .version {
+	font-style: italic;
+}

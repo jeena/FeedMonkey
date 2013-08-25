@@ -59,6 +59,12 @@ function App() {
 		$(".info.swipe").addClass("hidden");
 	}
 
+
+	var request = window.navigator.mozApps.getSelf();
+	request.onsuccess = function() {
+		$("#version").innerHTML = request.result.manifest.version;
+	}
+
 };
 
 App.prototype.authenticate = function() {
