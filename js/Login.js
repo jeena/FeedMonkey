@@ -37,8 +37,7 @@ Login.prototype.authenticate = function(e) {
 
 	var errs = [];
 	if(!server_url || server_url.indexOf("http") != 0) errs.push("add a server url that starts with http");
-	if(!user) errs.push("add a username");
-	if(!password) errs.push("add a password");
+	if((user && !password) || (!user && password)) errs.push("add both username and password or neither");
 
 	if(errs.length > 0) {
 		alert("Please " + errs.join(",\n") + ".");
