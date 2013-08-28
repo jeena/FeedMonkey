@@ -7,24 +7,6 @@ function App() {
 	if(!color) color = "red";
 	this.setColor(color);
 
-	var _this = this;
-
-	jester($("#full")).flick(function(touches, direction) {
-		if(direction == "left") _this.showNext();
-		else _this.showPrevious();
-	});
-
-	// FIXME move that code somewhere else
-	$(".info.swipe").ontouchend = function(e) {
-		localStorage.info_swipe = true;
-		$(".info.swipe").addClass("hidden");
-	};
-
-	if(localStorage.info_swipe) {
-		$(".info.swipe").addClass("hidden");
-	}
-
-
 	var request = window.navigator.mozApps.getSelf();
 	request.onsuccess = function() {
 		$("#version").innerHTML = request.result.manifest.version;
@@ -69,12 +51,33 @@ App.prototype.after_login = function() {
 			$$(".info").forEach(function(o) {
 				o.removeClass("hidden");
 			});
+		} else if(url == "#next") {
+			_this.showNext();
+		} else if(url == "#previous") {
+			_this.showPrevious();
 		}
 
 		// this is here so you can tap on a button more then once
 		// and it will still call onhashchange
 		window.location.hash = "#";
 	}
+
+	// FIXME move that code somewhere else
+	$(".info.swipe").ontouchend = function(e) {
+		localStorage.info_swipe = true;
+		$(".info.swipe").addClass("hidden");
+	};
+
+	if(localStorage.info_swipe) {
+		$(".info.swipe").addClass("hidden");
+	}
+
+	// set up swiping
+	jester($("#full")).flick(function(touches, direction) {
+		if(direction == "left") _this.showNext();
+		else _this.showPrevious();
+	});
+
 
 	this.changeToPage("#list");
 

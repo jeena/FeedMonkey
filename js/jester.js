@@ -254,7 +254,7 @@
             opts.swipeDistance  = opts.swipeDistance        ||    200;
 
             opts.flickTime      = opts.flickTime            ||    300;
-            opts.flickDistance  = opts.flickDistance        ||    200;
+            opts.flickDistance  = opts.flickDistance        ||    100;
 
             opts.deadX          = opts.deadX                ||    0;
             opts.deadY          = opts.deadY                ||    0;

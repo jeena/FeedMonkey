@@ -202,6 +202,14 @@ canvas {
 	text-decoration: underline;
 }
 
+#full footer.bar {
+	margin: 10px -10px 0 -10px;
+}
+
+#full footer.bar a.next {
+	float: right;
+}
+
 .info {
 	border: 3px solid black;
 	background: white;
