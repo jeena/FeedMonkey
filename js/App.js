@@ -7,11 +7,6 @@ function App() {
 	if(!color) color = "red";
 	this.setColor(color);
 
-	var request = window.navigator.mozApps.getSelf();
-	request.onsuccess = function() {
-		$("#version").innerHTML = request.result.manifest.version;
-	}
-
 };
 
 App.prototype.authenticate = function() {
@@ -19,6 +14,11 @@ App.prototype.authenticate = function() {
 };
 
 App.prototype.after_login = function() {
+
+	var request = window.navigator.mozApps.getSelf();
+	request.onsuccess = function() {
+		$("#version").innerHTML = request.result.manifest.version;
+	}
 
 	var _this = this;
 
@@ -31,6 +31,7 @@ App.prototype.after_login = function() {
 		var url = window.location.hash;
 
 		if(url == "#list") {
+			_this.setCurrentRead();
 			_this.changeToPage("#list");
 		} else if(url == "#reload") {
 			_this.reload();
@@ -68,7 +69,9 @@ App.prototype.after_login = function() {
 		$(".info.swipe").addClass("hidden");
 	};
 
-	if(localStorage.info_swipe) {
+	var supportsTouch = 'ontouchend' in document;
+
+	if(!supportsTouch || localStorage.info_swipe) {
 		$(".info.swipe").addClass("hidden");
 	}
 
@@ -271,14 +274,18 @@ App.prototype.showPrevious = function() {
 
 App.prototype.setCurrentRead = function() {
 	var article = this.unread_articles[this.currentIndex];
+	if(!article) return; // happens if we're not on a full article site
+	
 	if(!article.set_unread) {
 		article.unread = false;
 		this.updateList();
 		var _this = this;
-		setTimeout(function() { _this.ttrss.setArticleRead(article.id); },100);
+		setTimeout(function() { _this.ttrss.setArticleRead(article.id); }, 100);
 	}
 
 	article.set_unread = false;
+
+	this.updatePieChart();
 };
 
 App.prototype.setCurrentUnread = function() {
