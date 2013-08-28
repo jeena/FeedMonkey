@@ -14,7 +14,34 @@ function App() {
 		else _this.showPrevious();
 	});
 
+	// FIXME move that code somewhere else
+	$(".info.swipe").ontouchend = function(e) {
+		localStorage.info_swipe = true;
+		$(".info.swipe").addClass("hidden");
+	};
+
+	if(localStorage.info_swipe) {
+		$(".info.swipe").addClass("hidden");
+	}
+
+
+	var request = window.navigator.mozApps.getSelf();
+	request.onsuccess = function() {
+		$("#version").innerHTML = request.result.manifest.version;
+	}
+
+};
+
+App.prototype.authenticate = function() {
+	
+};
+
+App.prototype.after_login = function() {
+
+	var _this = this;
+
 	window.onhashchange = function(e) {
+
 		// do not reload page
 		e.preventDefault();
  		e.stopPropagation();
@@ -49,29 +76,6 @@ function App() {
 		window.location.hash = "#";
 	}
 
-	// FIXME move that code somewhere else
-	$(".info.swipe").ontouchend = function(e) {
-		localStorage.info_swipe = true;
-		$(".info.swipe").addClass("hidden");
-	};
-
-	if(localStorage.info_swipe) {
-		$(".info.swipe").addClass("hidden");
-	}
-
-
-	var request = window.navigator.mozApps.getSelf();
-	request.onsuccess = function() {
-		$("#version").innerHTML = request.result.manifest.version;
-	}
-
-};
-
-App.prototype.authenticate = function() {
-	
-};
-
-App.prototype.after_login = function() {
 	this.changeToPage("#list");
 
 	this.ttrss = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);

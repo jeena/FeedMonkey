@@ -3,6 +3,7 @@ html, body {
 	padding: 0;
 	min-height: 100%;
 	font-family: FeuraSans, sans-serif;
+	overflow-x: hidden;
 }
 
 .red    { background: #e74c3c; color: #ecf0f1; }
@@ -110,7 +111,7 @@ section > footer {
 }
 
 img {
-	max-width: 100%;
+	max-width: 100% !important;
 	height: auto;
 }
 
