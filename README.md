@@ -3,7 +3,7 @@ FeedMonkey
 
 TinyTinyRSS client for Firefox OS
 
-Get it on the [Mozilla Marketplace](https://marketplace.firefox.com/app/feedmonkey/
+Get it on the [Mozilla Marketplace](https://marketplace.firefox.com/app/feedmonkey/)
 
 A [TinyTinyRSS](http://tt-rss.org) mobile client with which you can read your RSS feeds and mark them as read on your server.
 
