@@ -52,7 +52,8 @@ TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
 				if(callback)
 					callback(JSON.parse(xhr.responseText).content);
 			} else {
-				alert("error: " + xhr.status + " " + xhr.statusText);
+				if(xhr.status != 0)
+					alert("error: " + xhr.status + " " + xhr.statusText);
 				if(callback)
 					callback(null);
 			}
