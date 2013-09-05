@@ -127,7 +127,7 @@ App.prototype.reload = function() {
 
 App.prototype.gotUnreadFeeds = function(new_articles) {
 
-	if(new_articles == null) { // on error load the saved unread articles.
+	if(new_articles == null || !this.validate(new_articles)) { // on error load the saved unread articles.
 		
 		var old_articles = localStorage.unread_articles;
 		if(old_articles) {
@@ -146,6 +146,15 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
 			this.populateList();
 		}		
 	}
+};
+
+App.prototype.validate = function(articles) {
+
+	for (var i = 0; i < articles.length; i++) {
+		if(typeof articles[i].title != "undefined") return true;
+	}
+
+	return false;
 };
 
 App.prototype.populateList = function() {
