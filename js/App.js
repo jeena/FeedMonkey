@@ -154,6 +154,8 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
 
 App.prototype.validate = function(articles) {
 
+	if(articles.length == 0) return true;
+
 	for (var i = 0; i < articles.length; i++) {
 		if(typeof articles[i].title != "undefined") return true;
 	}
@@ -288,12 +290,10 @@ App.prototype.showPrevious = function() {
 App.prototype.setCurrentRead = function() {
 	var article = this.unread_articles[this.currentIndex];
 	if(!article) return; // happens if we're not on a full article site
-	
 	if(!article.set_unread) {
 		article.unread = false;
 		this.updateList();
-		var _this = this;
-		setTimeout(function() { _this.ttrss.setArticleRead(article.id); }, 100);
+		this.ttrss.setArticleRead(article.id);
 	}
 
 	article.set_unread = false;
@@ -307,7 +307,7 @@ App.prototype.setCurrentUnread = function() {
 	article.set_unread = true;
 	this.updateList();
 	var _this = this;
-	setTimeout(function() { _this.ttrss.setArticleUnread(article.id); }, 100);
+	this.ttrss.setArticleUnread(article.id);
 
 	$("#setunread").innerHTML = "✔ unread";
 };

@@ -52,10 +52,8 @@ TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
 				if(callback)
 					callback(JSON.parse(xhr.responseText).content);
 			} else {
-				if(xhr.status != 0)
-					alert("error: " + xhr.status + " " + xhr.statusText);
-				if(callback)
-					callback(null);
+				if(xhr.status != 0) alert("error: " + xhr.status + " " + xhr.statusText);
+				if(callback) callback(null);
 			}
 		}
 	}
@@ -82,8 +80,9 @@ TinyTinyRSS.prototype.setArticleRead = function(article_id) {
 		field: 2
 	};
 
-	if (navigator.onLine) this.doOperation("updateArticle", options);
-	else {
+	if (navigator.onLine) {
+		this.doOperation("updateArticle", options);
+	} else {
 		var read_articles = localStorage.read_articles;
 		if(typeof read_articles !== "undefined") read_articles = JSON.parse(read_articles);
 		else read_articles = [];
