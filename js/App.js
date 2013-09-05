@@ -6,7 +6,7 @@ function App() {
 	var color = localStorage.color;
 	if(!color) color = "red";
 	this.setColor(color);
-
+	this.fontChange();
 };
 
 App.prototype.authenticate = function() {
@@ -56,6 +56,10 @@ App.prototype.after_login = function() {
 			_this.showNext();
 		} else if(url == "#previous") {
 			_this.showPrevious();
+		} else if(url == "#font-smaller") {
+			_this.fontChange("smaller");
+		} else if(url == "#font-bigger") {
+			_this.fontChange("bigger");
 		}
 
 		// this is here so you can tap on a button more then once
@@ -310,4 +314,38 @@ App.prototype.setCurrentUnread = function() {
 
 App.prototype.goToList = function() {
 	this.changeToPage("#list");
+};
+
+App.prototype.fontChange = function(size) {
+	if(size == "bigger") {
+		
+		var i = localStorage.font_size;
+		if(i < 5) {
+			document.body.removeClass("f" + i);
+			i++;
+			document.body.addClass("f" + i);
+			localStorage.font_size = i;
+		}
+
+	} else if(size == "smaller") {
+
+		var i = localStorage.font_size;
+		if(i > 1) {
+			document.body.removeClass("f" + i);
+			i--;
+			document.body.addClass("f" + i);
+			localStorage.font_size = i;
+		}
+
+	} else {
+
+		var i = localStorage.font_size;
+		if(typeof i == "undefined") {
+			i = localStorage.font_size = 2;
+		}
+
+		document.body.addClass("f" + i);
+	}
+
+
 };
