@@ -116,13 +116,13 @@ img {
 }
 
 @media screen and (width: 320px) {
-	#full > article > * {
+	#full > article * {
 		max-width: 300px !important;
 	}
 }
 
 @media screen and (width: 480px) {
-	#full > article > * {
+	#full > article * {
 		max-width: 460px !important;
 	}
 }
@@ -207,7 +207,7 @@ canvas {
 }
 
 #full > article {
-	padding: 0 10px;
+	padding: 0 10px 1em 10px;
 	-moz-box-flex: 1;
 }
 
