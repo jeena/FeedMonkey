@@ -11,6 +11,6 @@ A [TinyTinyRSS](http://tt-rss.org) mobile client with which you can read your RS
 
 - Works also offline.
 
-- You can chose between 4 fresh color sshemes.
+- You can chose between 4 fresh color schemes.
 
 To use this Tiny Tiny RSS client to read your RSS feeds you need a TTRSS server, it is not a stand alone application.
