@@ -13,7 +13,7 @@ TinyTinyRSS.prototype.onoffline = function() {
 
 TinyTinyRSS.prototype.ononline = function() {
 	var read_articles = localStorage.read_articles;
-	if (typeof read_articles !== "undefined") {
+	if (read_articles ) {
 		read_articles = JSON.parse(localStorage.read_articles);
 		this.setArticleRead(read_articles.join(","), function() {
 			localStorage.read_articles = null;
@@ -27,6 +27,7 @@ TinyTinyRSS.prototype.ononline = function() {
 			localStorage.unread_articles();
 		});		
 	}
+
 };
 
 TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
@@ -89,6 +90,18 @@ TinyTinyRSS.prototype.setArticleRead = function(article_id) {
 		read_articles.push(article_id);
 		localStorage.read_articles = JSON.stringify(read_articles);
 	}
+};
+
+TinyTinyRSS.prototype.setArticleStarred = function(article_id) {
+	var options = {
+		article_ids: article_id,
+		mode: 1,
+		field: 0
+	};
+
+	if (navigator.onLine) {
+		this.doOperation("updateArticle", options);
+	} 
 };
 
 TinyTinyRSS.prototype.setArticleUnread = function(article_id) {

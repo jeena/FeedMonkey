@@ -45,6 +45,8 @@ App.prototype.after_login = function() {
 			_this.showFull(_this.unread_articles[i]);
 		} else if(url == "#unread") {
 			_this.setCurrentUnread();
+		} else if(url == "#starred") {
+			_this.setCurrentStarred();
 		} else if(url == "#logout") {
 			_this.logout();
 		} else if(url == "#reset-info") {
@@ -299,6 +301,13 @@ App.prototype.setCurrentRead = function() {
 	article.set_unread = false;
 
 	this.updatePieChart();
+};
+
+App.prototype.setCurrentStarred = function() {
+	var article = this.unread_articles[this.currentIndex];
+	if(!article) return; // happens if we're not on a full article site
+	this.ttrss.setArticleStarred(article.id);
+
 };
 
 App.prototype.setCurrentUnread = function() {
