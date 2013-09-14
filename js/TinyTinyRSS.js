@@ -104,6 +104,18 @@ TinyTinyRSS.prototype.setArticleStarred = function(article_id) {
 	} 
 };
 
+TinyTinyRSS.prototype.setArticleUnStarred = function(article_id) {
+	var options = {
+		article_ids: article_id,
+		mode: 0,
+		field: 0
+	};
+
+	if (navigator.onLine) {
+		this.doOperation("updateArticle", options);
+	} 
+};
+
 TinyTinyRSS.prototype.setArticleUnread = function(article_id) {
 	var options = {
 		article_ids: article_id,
