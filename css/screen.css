@@ -230,6 +230,10 @@ canvas {
 	line-height: 1.05;
 }
 
+.button.icon.previous, .button.icon.next {
+	padding-top: 0.5em;
+}
+
 #full h1 {
 	font-size: 1.3em;
 	font-weight: normal;
