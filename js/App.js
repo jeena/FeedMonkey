@@ -264,6 +264,7 @@ App.prototype.showFull = function(article, slide_back) {
 	} else {
 		$("#setunread").innerHTML = "Set unread";
 	}
+	$("#setstarred").innerHTML = "no *";
 
 };
 
@@ -308,6 +309,7 @@ App.prototype.setCurrentStarred = function() {
 	if(!article) return; // happens if we're not on a full article site
 	this.ttrss.setArticleStarred(article.id);
 
+	$("#setstarred").innerHTML = "*";
 };
 
 App.prototype.setCurrentUnread = function() {
