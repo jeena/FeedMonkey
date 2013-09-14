@@ -219,6 +219,12 @@ canvas {
 	height: 2.5em;
 }
 
+#full .star, #full .unread {
+	line-height: 0.52;
+	font-size: 2em;
+	vertical-align: bottom;
+}
+
 #full h1 {
 	font-size: 1.3em;
 	font-weight: normal;

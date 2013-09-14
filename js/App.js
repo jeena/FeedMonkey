@@ -46,7 +46,7 @@ App.prototype.after_login = function() {
 		} else if(url == "#unread") {
 			_this.setCurrentUnread();
 		} else if(url == "#starred") {
-			_this.ChangeStarred();
+			_this.toggleStarred();
 		} else if(url == "#logout") {
 			_this.logout();
 		} else if(url == "#reset-info") {
@@ -260,14 +260,15 @@ App.prototype.showFull = function(article, slide_back) {
 	$(page_id + " .article").innerHTML = article.content;
 
 	if(article.set_unread) {
-		$("#setunread").innerHTML = "✔ unread";
+		$("#setunread").innerHTML = "●";
 	} else {
-		$("#setunread").innerHTML = "Set unread";
+		$("#setunread").innerHTML = "○";
 	}
+
 	if(article.marked) {
-		$("#setstarred").innerHTML = "*";
+		$("#setstarred").innerHTML = "★";
 	} else {
-		$("#setstarred").innerHTML = "no *";
+		$("#setstarred").innerHTML = "☆";
 	}
 
 };
@@ -316,10 +317,10 @@ App.prototype.setCurrentUnread = function() {
 	var _this = this;
 	this.ttrss.setArticleUnread(article.id);
 
-	$("#setunread").innerHTML = "✔ unread";
+	$("#setunread").innerHTML = "●";
 };
 
-App.prototype.ChangeStarred = function() {
+App.prototype.toggleStarred = function() {
 	var article = this.unread_articles[this.currentIndex];
 	if(!article) return; // happens if we're not on a full article site
 	
@@ -327,13 +328,13 @@ App.prototype.ChangeStarred = function() {
 		article.marked = true;
 		this.updateList();
 		this.ttrss.setArticleStarred(article.id);
-		$("#setstarred").innerHTML = "*";
+		$("#setstarred").innerHTML = "★";
 	}
 	else {
 		article.marked = false;
 		this.updateList();
 		this.ttrss.setArticleUnStarred(article.id);
-		$("#setstarred").innerHTML = "no *";
+		$("#setstarred").innerHTML = "☆";
 	}
 
 };
