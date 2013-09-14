@@ -219,10 +219,15 @@ canvas {
 	height: 2.5em;
 }
 
-#full .star, #full .unread {
+.button.icon {
 	line-height: 0.52;
 	font-size: 2em;
 	vertical-align: bottom;
+	padding-top: 0.35em;
+}
+
+.button.icon2 {
+	line-height: 1.05;
 }
 
 #full h1 {

@@ -62,6 +62,8 @@ App.prototype.after_login = function() {
 			_this.fontChange("smaller");
 		} else if(url == "#font-bigger") {
 			_this.fontChange("bigger");
+		} else if(url == "#all-read") {
+			_this.toggleAllRead();
 		}
 
 		// this is here so you can tap on a button more then once
@@ -128,6 +130,7 @@ App.prototype.setColor = function(color) {
 
 App.prototype.reload = function() {
 	this.unread_articles = [];
+	$("#all-read").innerHTML = "●";
 	this.ttrss.getUnreadFeeds(this.gotUnreadFeeds.bind(this));
 };
 
@@ -187,9 +190,11 @@ App.prototype.populateList = function() {
 
 App.prototype.updateList = function() {
 	var unread = 0;
-	var _this = this;
 	$$("#list ul li").forEach(function(o, i) {
-		if(!this.unread_articles[i].unread) o.removeClass("unread");
+
+		if(!this.unread_articles[i].unread) {
+			o.removeClass("unread");
+		}
 		else {
 			unread++;
 			o.addClass("unread");
@@ -314,10 +319,43 @@ App.prototype.setCurrentUnread = function() {
 	article.unread = true;
 	article.set_unread = true;
 	this.updateList();
-	var _this = this;
 	this.ttrss.setArticleUnread(article.id);
 
 	$("#setunread").innerHTML = "●";
+};
+
+App.prototype.toggleAllRead = function() {
+
+	if($("#all-read").innerHTML == "●") { // set all read
+
+		var ids = [];
+		for (var i = 0; i < this.unread_articles.length; i++) {
+			var article = this.unread_articles[i];
+			article.unread = false;
+			article.set_unread = false;
+			ids.push(article.id);
+		}
+		$("#all-read").innerHTML = "○";
+
+		this.updateList();
+
+		this.ttrss.setArticleRead(ids.join(","));
+
+	} else {
+
+		var ids = [];
+		for (var i = 0; i < this.unread_articles.length; i++) {
+			var article = this.unread_articles[i];
+			article.unread = true;
+			article.set_unread = false;
+			ids.push(article.id);
+		}
+		$("#all-read").innerHTML = "●";
+		this.updateList();
+
+		this.ttrss.setArticleUnread(ids.join(","));
+
+	}
 };
 
 App.prototype.toggleStarred = function() {
