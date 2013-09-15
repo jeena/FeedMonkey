@@ -336,11 +336,10 @@ canvas {
 
 #settings .version {
 	padding-top: 1em;
-	text-align: center;
 }
 
-#settings .icons {
-	text-align: center;
+#settings .icons a, #settings .madeby a {
+	text-decoration: underline;
 }
 
 #settings .font-size {
