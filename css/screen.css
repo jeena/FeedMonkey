@@ -1,3 +1,8 @@
+@font-face {
+	font-family: Entypo;
+	src: url(entypo.woff);
+}
+
 html, body {
 	margin: 0;
 	padding: 0;
@@ -36,6 +41,10 @@ a {
 	padding: 10px;
 	border-radius: 0;
 	font-size: 1em;
+}
+
+.icon {
+	font-family: "Entypo";
 }
 
 header .button, footer .button, .button.small {
@@ -178,13 +187,13 @@ canvas {
 .yellow #list li { border-bottom: 1px solid #f39c12; }
 
 #list li:after {
-	content: "›";
+	content: "";
 	position: absolute;
 	right: 10px;
 	top: 0.1em;
 	font-weight: 100;
 	font-size: 3em;
-	font-family: "Open Sans";
+	font-family: "Entypo";
 }
 
 .red    #list li:after { color: #c0392b; }
@@ -219,19 +228,10 @@ canvas {
 	height: 2.5em;
 }
 
-.button.icon {
-	line-height: 0.52;
-	font-size: 2em;
+.icon {
+	line-height: 0.4;
+	font-size: 3em;
 	vertical-align: bottom;
-	padding-top: 0.35em;
-}
-
-.button.icon2 {
-	line-height: 1.05;
-}
-
-.button.icon.previous, .button.icon.next {
-	padding-top: 0.5em;
 }
 
 #full h1 {
@@ -335,16 +335,22 @@ canvas {
 }
 
 #settings .version {
-	font-style: italic;
+	padding-top: 1em;
+	text-align: center;
+}
+
+#settings .icons {
+	text-align: center;
 }
 
 #settings .font-size {
 	text-align: right;
 }
 
-#settings .font-size span {
+#settings .font-size > span {
 	float: left;
-	line-height: 2.4;
+	padding: 10px 0;
+	vertical-align: middle;
 }
 
 #settings .button.small {

@@ -130,7 +130,7 @@ App.prototype.setColor = function(color) {
 
 App.prototype.reload = function() {
 	this.unread_articles = [];
-	$("#all-read").innerHTML = "●";
+	$("#all-read").innerHTML = "&#128229;";
 	this.ttrss.getUnreadFeeds(this.gotUnreadFeeds.bind(this));
 };
 
@@ -201,6 +201,12 @@ App.prototype.updateList = function() {
 		}
 	}, this);
 
+	if(unread > 0) {
+		$("#all-read").innerHTML = "&#128229;";
+	} else {
+		$("#all-read").innerHTML = "&#128228;";
+	}
+
 	this.updatePieChart();
 };
 
@@ -265,15 +271,15 @@ App.prototype.showFull = function(article, slide_back) {
 	$(page_id + " .article").innerHTML = article.content;
 
 	if(article.set_unread) {
-		$("#setunread").innerHTML = "●";
+		$("#setunread").innerHTML = "&#128228;";
 	} else {
-		$("#setunread").innerHTML = "○";
+		$("#setunread").innerHTML = "&#128229;";
 	}
 
 	if(article.marked) {
-		$("#setstarred").innerHTML = "★";
+		$("#setstarred").innerHTML = "&#9733;";
 	} else {
-		$("#setstarred").innerHTML = "☆";
+		$("#setstarred").innerHTML = "&#9734;";
 	}
 
 };
@@ -321,12 +327,12 @@ App.prototype.setCurrentUnread = function() {
 	this.updateList();
 	this.ttrss.setArticleUnread(article.id);
 
-	$("#setunread").innerHTML = "●";
+	$("#setunread").innerHTML = "&#128228;";
 };
 
 App.prototype.toggleAllRead = function() {
 
-	if($("#all-read").innerHTML == "●") { // set all read
+	if($("#all-read").innerHTML == "📥") { // set all read
 
 		var ids = [];
 		for (var i = 0; i < this.unread_articles.length; i++) {
@@ -335,7 +341,7 @@ App.prototype.toggleAllRead = function() {
 			article.set_unread = false;
 			ids.push(article.id);
 		}
-		$("#all-read").innerHTML = "○";
+		$("#all-read").innerHTML = "&#128228;";
 
 		this.updateList();
 
@@ -350,7 +356,7 @@ App.prototype.toggleAllRead = function() {
 			article.set_unread = false;
 			ids.push(article.id);
 		}
-		$("#all-read").innerHTML = "●";
+		$("#all-read").innerHTML = "&#128229;";
 		this.updateList();
 
 		this.ttrss.setArticleUnread(ids.join(","));
@@ -366,13 +372,13 @@ App.prototype.toggleStarred = function() {
 		article.marked = true;
 		this.updateList();
 		this.ttrss.setArticleStarred(article.id);
-		$("#setstarred").innerHTML = "★";
+		$("#setstarred").innerHTML = "&#9733;";
 	}
 	else {
 		article.marked = false;
 		this.updateList();
 		this.ttrss.setArticleUnStarred(article.id);
-		$("#setstarred").innerHTML = "☆";
+		$("#setstarred").innerHTML = "&#9734;";
 	}
 
 };
