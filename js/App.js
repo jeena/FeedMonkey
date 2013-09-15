@@ -44,7 +44,7 @@ App.prototype.after_login = function() {
 			var i = parseInt(url.replace("#full-", ""), 10);
 			_this.showFull(_this.unread_articles[i]);
 		} else if(url == "#unread") {
-			_this.setCurrentUnread();
+			_this.toggleCurrentUnread();
 		} else if(url == "#starred") {
 			_this.toggleStarred();
 		} else if(url == "#logout") {
@@ -130,7 +130,7 @@ App.prototype.setColor = function(color) {
 
 App.prototype.reload = function() {
 	this.unread_articles = [];
-	$("#all-read").innerHTML = "&#128229;";
+	$("#all-read").innerHTML = "❌";
 	this.ttrss.getUnreadFeeds(this.gotUnreadFeeds.bind(this));
 };
 
@@ -202,9 +202,9 @@ App.prototype.updateList = function() {
 	}, this);
 
 	if(unread > 0) {
-		$("#all-read").innerHTML = "&#128229;";
+		$("#all-read").innerHTML = "❌";
 	} else {
-		$("#all-read").innerHTML = "&#128228;";
+		$("#all-read").innerHTML = "✓";
 	}
 
 	this.updatePieChart();
@@ -270,10 +270,10 @@ App.prototype.showFull = function(article, slide_back) {
 
 	$(page_id + " .article").innerHTML = article.content;
 
-	if(article.set_unread) {
-		$("#setunread").innerHTML = "&#128228;";
+	if(article.unread) {
+		$("#setunread").innerHTML = "❌";
 	} else {
-		$("#setunread").innerHTML = "&#128229;";
+		$("#setunread").innerHTML = "✓";
 	}
 
 	if(article.marked) {
@@ -317,22 +317,30 @@ App.prototype.setCurrentRead = function() {
 
 	article.set_unread = false;
 
+	$("#setunread").innerHTML = "✓";
+
 	this.updatePieChart();
 };
 
-App.prototype.setCurrentUnread = function() {
+App.prototype.toggleCurrentUnread = function() {
 	var article = this.unread_articles[this.currentIndex];
-	article.unread = true;
-	article.set_unread = true;
+	if(article.unread) {
+		article.unread = false;
+		article.set_unread = false;
+		$("#setunread").innerHTML = "✓";
+	} else {
+		article.unread = true;
+		article.set_unread = true;
+		$("#setunread").innerHTML = "❌";
+	}
+
 	this.updateList();
 	this.ttrss.setArticleUnread(article.id);
-
-	$("#setunread").innerHTML = "&#128228;";
 };
 
 App.prototype.toggleAllRead = function() {
 
-	if($("#all-read").innerHTML == "📥") { // set all read
+	if($("#all-read").innerHTML == "❌") { // set all read
 
 		var ids = [];
 		for (var i = 0; i < this.unread_articles.length; i++) {
@@ -341,7 +349,7 @@ App.prototype.toggleAllRead = function() {
 			article.set_unread = false;
 			ids.push(article.id);
 		}
-		$("#all-read").innerHTML = "&#128228;";
+		$("#all-read").innerHTML = "&#10003;";
 
 		this.updateList();
 
@@ -356,7 +364,7 @@ App.prototype.toggleAllRead = function() {
 			article.set_unread = false;
 			ids.push(article.id);
 		}
-		$("#all-read").innerHTML = "&#128229;";
+		$("#all-read").innerHTML = "&#10060;";
 		this.updateList();
 
 		this.ttrss.setArticleUnread(ids.join(","));

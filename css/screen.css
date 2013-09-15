@@ -63,7 +63,6 @@ header .button, footer .button, .button.small {
 .yellow .bar .button { background: #f1c40f; color: #2c3e50; }
 
 .smallogo { text-align: center; margin: 0; padding: 0; }
-.smallogo img { width: 50%; }
 
 button:active, a:active, .button:active {
 	background: black !important;
