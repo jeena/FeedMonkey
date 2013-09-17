@@ -13,7 +13,7 @@ App.prototype.authenticate = function() {
 	
 };
 
-App.prototype.after_login = function() {
+App.prototype.after_login = function(backend) {
 
 	var request = window.navigator.mozApps.getSelf();
 	request.onsuccess = function() {
@@ -92,12 +92,16 @@ App.prototype.after_login = function() {
 
 	this.changeToPage("#list");
 
-	this.ttrss = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
+	if(backend == "TinyTinyRSS") {
+		this.backend = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
+	} else if(backend == "OwnCloud") {
+		this.backend = new OwnCloud(this, localStorage.server_url, localStorage.session_id);
+	}
 	this.reload();
 };
 
 App.prototype.logout = function() {
-	this.ttrss.logOut();
+	this.backend.logOut();
 	this.unread_articles = [];
 	this.populateList();
 	this.login.log_out();
@@ -131,10 +135,12 @@ App.prototype.setColor = function(color) {
 App.prototype.reload = function() {
 	this.unread_articles = [];
 	$("#all-read").innerHTML = "❌";
-	this.ttrss.getUnreadFeeds(this.gotUnreadFeeds.bind(this));
+	this.backend.getUnreadFeeds(this.gotUnreadFeeds.bind(this));
 };
 
 App.prototype.gotUnreadFeeds = function(new_articles) {
+
+	console.log(JSON.stringify(new_articles.length))
 
 	if(new_articles == null || !this.validate(new_articles)) { // on error load the saved unread articles.
 		
@@ -149,7 +155,7 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
 		this.unread_articles = this.unread_articles.concat(new_articles);
 
 		if(new_articles.length > 0) {
-			this.ttrss.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles.length);
+			this.backend.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles);
 		} else {
 			localStorage.unread_articles = JSON.stringify(this.unread_articles);
 			this.populateList();
@@ -312,7 +318,7 @@ App.prototype.setCurrentRead = function() {
 	if(!article.set_unread) {
 		article.unread = false;
 		this.updateList();
-		this.ttrss.setArticleRead(article.id);
+		this.backend.setArticleRead(article.id);
 	}
 
 	article.set_unread = false;
@@ -335,7 +341,7 @@ App.prototype.toggleCurrentUnread = function() {
 	}
 
 	this.updateList();
-	this.ttrss.setArticleUnread(article.id);
+	this.backend.setArticleUnread(article.id);
 };
 
 App.prototype.toggleAllRead = function() {
@@ -353,7 +359,7 @@ App.prototype.toggleAllRead = function() {
 
 		this.updateList();
 
-		this.ttrss.setArticleRead(ids.join(","));
+		this.backend.setArticleRead(ids.join(","));
 
 	} else {
 
@@ -367,7 +373,7 @@ App.prototype.toggleAllRead = function() {
 		$("#all-read").innerHTML = "&#10060;";
 		this.updateList();
 
-		this.ttrss.setArticleUnread(ids.join(","));
+		this.backend.setArticleUnread(ids.join(","));
 
 	}
 };
@@ -379,13 +385,13 @@ App.prototype.toggleStarred = function() {
 	if(!article.marked) {
 		article.marked = true;
 		this.updateList();
-		this.ttrss.setArticleStarred(article.id);
+		this.backend.setArticleStarred(article.id);
 		$("#setstarred").innerHTML = "&#9733;";
 	}
 	else {
 		article.marked = false;
 		this.updateList();
-		this.ttrss.setArticleUnStarred(article.id);
+		this.backend.setArticleUnStarred(article.id);
 		$("#setstarred").innerHTML = "&#9734;";
 	}
 

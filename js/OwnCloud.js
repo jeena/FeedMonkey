@@ -1,17 +1,17 @@
-function TinyTinyRSS(app, server_url, session_id) {
+function OwnCloud(app, server_url, user_pass_btoa) {
 	this.app = app;
 	this.server_url = server_url;
-	this.session_id = session_id;
+	this.session_id = user_pass_btoa;
 
 	window.addEventListener("offline", this.onoffline.bind(this));
 	window.addEventListener("online", this.ononline.bind(this));
 }
 
-TinyTinyRSS.prototype.onoffline = function() {
+OwnCloud.prototype.onoffline = function() {
 	// Do nothing
 };
 
-TinyTinyRSS.prototype.ononline = function() {
+OwnCloud.prototype.ononline = function() {
 	var read_articles = localStorage.read_articles;
 	if (read_articles ) {
 		read_articles = JSON.parse(localStorage.read_articles);
@@ -30,52 +30,74 @@ TinyTinyRSS.prototype.ononline = function() {
 
 };
 
-TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
+OwnCloud.prototype.doOperation = function(method, operation, new_options, callback) {
 	if(!navigator.onLine) {
 		callback(null);
 		return;
 	}
 
-	var url = this.server_url + "/api/";
-	var options = {
-		sid: this.session_id,
-		op: operation
-	};
+	var url = this.server_url + "/index.php/apps/news/api/v1-2/" + operation;
+	var options = {};
 	
 	for (var key in new_options) {
 		options[key] = new_options[key];
 	}
 
-	var xhr = new XMLHttpRequest({mozSystem: true});
+	if(method == "GET" || method == "HEAD") {
+		var a = [];
+		for(var key in options) {
+			a.push(key + "=" + options[key]);
+		}
+		url += "?" + a.join("&");
+	}
+
+	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState == 4) {
 			if(xhr.status == 200) {
 				if(callback)
-					callback(JSON.parse(xhr.responseText).content);
+					callback(JSON.parse(xhr.responseText));
 			} else {
 				if(xhr.status != 0) alert("error: " + xhr.status + " " + xhr.statusText);
 				if(callback) callback(null);
 			}
 		}
 	}
-	xhr.open("POST", url, true);
+	xhr.open(method, url, true);
+	xhr.withCredentials = true;
+	//var auth = btoa(user + ':' + password);
+	xhr.setRequestHeader('Authorization', 'Basic ' + this.session_id);
 	xhr.send(JSON.stringify(options));
 }
 
-TinyTinyRSS.prototype.getUnreadFeeds = function(callback, skip) {
-	skip = skip.length;
+OwnCloud.prototype.getUnreadFeeds = function(callback, skip) {
+	if(skip) {
+		skip = skip[skip.length - 1].id;
+	}
+
 	var options = {
-		show_excerpt: false,
-		view_mode: "unread",
-		show_content: true,
-		feed_id: -4,
-		skip: skip || 0
+		batchSize: 700,
+		offset: skip || 0,
+		type: 3,
+		id: 0,
+		getRead: false
 	};
 
-	this.doOperation("getHeadlines", options, callback);
+	var _this = this;
+	this.doOperation("GET", "items", options, function(data) {
+		var items = data.items;
+		// FIXME
+		var feeds = {};
+		for (var i = 0; i < data.feeds.length; i++) {
+			var feed = data.feeds[i];
+			feeds[feed.id] = feed;
+		}
+
+		callback(items.map(_this.normalize_article, feeds));
+	});
 }
 
-TinyTinyRSS.prototype.setArticleRead = function(article_id) {
+OwnCloud.prototype.setArticleRead = function(article_id) {
 	var options = {
 		article_ids: article_id,
 		mode: 0,
@@ -93,7 +115,7 @@ TinyTinyRSS.prototype.setArticleRead = function(article_id) {
 	}
 };
 
-TinyTinyRSS.prototype.setArticleStarred = function(article_id) {
+OwnCloud.prototype.setArticleStarred = function(article_id) {
 	var options = {
 		article_ids: article_id,
 		mode: 1,
@@ -105,7 +127,7 @@ TinyTinyRSS.prototype.setArticleStarred = function(article_id) {
 	} 
 };
 
-TinyTinyRSS.prototype.setArticleUnStarred = function(article_id) {
+OwnCloud.prototype.setArticleUnStarred = function(article_id) {
 	var options = {
 		article_ids: article_id,
 		mode: 0,
@@ -117,7 +139,7 @@ TinyTinyRSS.prototype.setArticleUnStarred = function(article_id) {
 	} 
 };
 
-TinyTinyRSS.prototype.setArticleUnread = function(article_id) {
+OwnCloud.prototype.setArticleUnread = function(article_id) {
 	var options = {
 		article_ids: article_id,
 		mode: 1,
@@ -134,25 +156,45 @@ TinyTinyRSS.prototype.setArticleUnread = function(article_id) {
 	}
 };
 
-TinyTinyRSS.prototype.logOut = function() {
+OwnCloud.prototype.normalize_article = function(article) {
+	var feeds = this;
+
+	return {
+		id: article.id,
+		title: article.title,
+		content: article.body,
+		feed_title: feeds[article.feedId].title,
+		excerpt: article.body.stripHTML().substring(0, 50),
+		updated: article.pubDate,
+		link: article.link,
+		marked: article.starred,
+		unread: article.unread
+	}
+};
+
+OwnCloud.prototype.logOut = function() {
 	this.doOperation("logout");
 };
 
-TinyTinyRSS.login = function(server_url, user, password, callback) {
+OwnCloud.login = function(server_url, user, password, callback) {
 	
-	var url = server_url + "/api/";
-	var options = {op: "login", user: user, password: password};
+	var url = server_url + "/index.php/apps/news/api/v1-2/version";
 
-	var xhr = new XMLHttpRequest({mozSystem: true});
+	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
+		console.log(xhr.status)
 		if(xhr.readyState == 4) {
 			if(xhr.status == 200) {
-				callback(JSON.parse(xhr.responseText).content)
+				callback(JSON.parse(xhr.responseText))
 			} else {
 				alert("error: " + xhr.status + " " + xhr.statusText)
 			}
 		}
 	}
-	xhr.open("POST", url, true);
-	xhr.send(JSON.stringify(options));
+
+	xhr.open("GET", url, true);
+	xhr.withCredentials = true;
+	var auth = btoa(user + ':' + password);
+	xhr.setRequestHeader('Authorization', 'Basic ' + auth);
+	xhr.send();
 }
