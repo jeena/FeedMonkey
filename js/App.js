@@ -140,8 +140,6 @@ App.prototype.reload = function() {
 
 App.prototype.gotUnreadFeeds = function(new_articles) {
 
-	console.log(JSON.stringify(new_articles.length))
-
 	if(new_articles == null || !this.validate(new_articles)) { // on error load the saved unread articles.
 		
 		var old_articles = localStorage.unread_articles;

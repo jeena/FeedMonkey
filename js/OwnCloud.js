@@ -87,13 +87,15 @@ OwnCloud.prototype.getUnreadFeeds = function(callback, skip) {
 	this.doOperation("GET", "items", options, function(data) {
 		var items = data.items;
 		// FIXME
+		/*
 		var feeds = {};
 		for (var i = 0; i < data.feeds.length; i++) {
 			var feed = data.feeds[i];
 			feeds[feed.id] = feed;
 		}
+		*/
 
-		callback(items.map(_this.normalize_article, feeds));
+		callback(items.map(_this.normalize_article));
 	});
 }
 
@@ -163,7 +165,7 @@ OwnCloud.prototype.normalize_article = function(article) {
 		id: article.id,
 		title: article.title,
 		content: article.body,
-		feed_title: feeds[article.feedId].title,
+		feed_title: "", // FIXME: feeds[article.feedId].title,
 		excerpt: article.body.stripHTML().substring(0, 50),
 		updated: article.pubDate,
 		link: article.link,
@@ -182,7 +184,6 @@ OwnCloud.login = function(server_url, user, password, callback) {
 
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
-		console.log(xhr.status)
 		if(xhr.readyState == 4) {
 			if(xhr.status == 200) {
 				callback(JSON.parse(xhr.responseText))
