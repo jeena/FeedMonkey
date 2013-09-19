@@ -114,7 +114,7 @@ App.prototype.changeToPage = function(page) {
 	if(page == "#list") {
 		document.body.scrollTop = this.saveScrollTop;
 	} else {
-		window.scroll(0,0);
+		window.scroll(0, 0);
 	}
 
 	active.removeClass("active");
