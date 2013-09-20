@@ -34,5 +34,25 @@ Node.prototype.removeClass = function(cls) {
 	}
 };
 
+var __entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;"
+};
+
+String.prototype.escapeHTML = function() {
+    return String(this).replace(/[&<>]/g, function (s) {
+        return __entityMap[s];
+    });
+}
+
+String.prototype.stripHTML = function() {
+	return this.replace(/(<([^>]+)>)/ig, "");
+}
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
 if(!window.app) window.app = new App();
 

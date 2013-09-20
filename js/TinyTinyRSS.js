@@ -12,22 +12,14 @@ TinyTinyRSS.prototype.onoffline = function() {
 };
 
 TinyTinyRSS.prototype.ononline = function() {
-	var read_articles = localStorage.read_articles;
-	if (read_articles ) {
-		read_articles = JSON.parse(localStorage.read_articles);
-		this.setArticleRead(read_articles.join(","), function() {
-			localStorage.read_articles = null;
-		});
-	}
 
-	var unread_articles = localStorage.unread_articles;
-	if (unread_articles) {
-		unread_articles = JSON.parse(unread_articles);
-		this.setArticleUnread(unread_articles.join(","), function() {
-			localStorage.unread_articles();
-		});		
-	}
-
+	["read", "unread", "starred", "unstarred"].forEach(function(type) {
+		var articles = localStorage[type + "_articles"];
+		if(articles) {
+			var callback = function(ok) { if(ok) localStorage[type + "_articles"] = null }
+			this.call("setArticles" + type.capitalize(), [JSON.parse(articles), callback]);
+		}
+	});
 };
 
 TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
@@ -62,7 +54,12 @@ TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
 	xhr.send(JSON.stringify(options));
 }
 
+TinyTinyRSS.prototype.reload = function(callback) {
+	this.getUnreadFeeds(callback, []);
+};
+
 TinyTinyRSS.prototype.getUnreadFeeds = function(callback, skip) {
+	skip = skip.length;
 	var options = {
 		show_excerpt: false,
 		view_mode: "unread",
@@ -74,63 +71,92 @@ TinyTinyRSS.prototype.getUnreadFeeds = function(callback, skip) {
 	this.doOperation("getHeadlines", options, callback);
 }
 
-TinyTinyRSS.prototype.setArticleRead = function(article_id) {
+TinyTinyRSS.prototype.setArticlesRead = function(articles, callback) {
+
 	var options = {
-		article_ids: article_id,
+		article_ids: articles.map(function(o) { return o.id }).join(","),
 		mode: 0,
 		field: 2
+	};
+
+	if (navigator.onLine) {
+		this.doOperation("updateArticle", options, callback);
+	} else {
+		this.append("read_articles", articles);
+	}
+};
+
+TinyTinyRSS.prototype.setArticleRead = function(article, callback) {
+	this.setArticlesRead([article], callback);
+};
+
+
+TinyTinyRSS.prototype.setArticlesUnread = function(articles, callback) {
+
+	var options = {
+		article_ids: articles.map(function(o) { return o.id }).join(","),
+		mode: 1,
+		field: 2
+	};
+
+	if (navigator.onLine) {
+		this.doOperation("updateArticle", options, callback);
+	} else {
+		this.append("unread_articles", articles);
+	}
+};
+
+TinyTinyRSS.prototype.setArticleUnread = function(article, callback) {
+	this.setArticlesUnread([article], callback);
+};
+
+TinyTinyRSS.prototype.setArticlesStarred = function(articles, callback) {
+
+	var options = {
+		article_ids: articles.map(function(o) { return o.id }).join(","),
+		mode: 1,
+		field: 0
 	};
 
 	if (navigator.onLine) {
 		this.doOperation("updateArticle", options);
 	} else {
-		var read_articles = localStorage.read_articles;
-		if(typeof read_articles !== "undefined") read_articles = JSON.parse(read_articles);
-		else read_articles = [];
-		read_articles.push(article_id);
-		localStorage.read_articles = JSON.stringify(read_articles);
+		this.append("starred_articles", articles);
 	}
 };
 
-TinyTinyRSS.prototype.setArticleStarred = function(article_id) {
-	var options = {
-		article_ids: article_id,
-		mode: 1,
-		field: 0
-	};
-
-	if (navigator.onLine) {
-		this.doOperation("updateArticle", options);
-	} 
+TinyTinyRSS.prototype.setArticleStarred = function(article, callback) {
+	this.setArticlesStarred([article], callback);
 };
 
-TinyTinyRSS.prototype.setArticleUnStarred = function(article_id) {
+TinyTinyRSS.prototype.setArticlesUnstarred = function(articles, callback) {
+
 	var options = {
-		article_ids: article_id,
+		article_ids: articles.map(function(o) { return o.id}).join(","),
 		mode: 0,
 		field: 0
 	};
 
 	if (navigator.onLine) {
-		this.doOperation("updateArticle", options);
-	} 
+		this.doOperation("updateArticle", options, callback);
+	} else {
+		this.append("unstarred_articles", articles);
+	}
 };
 
-TinyTinyRSS.prototype.setArticleUnread = function(article_id) {
-	var options = {
-		article_ids: article_id,
-		mode: 1,
-		field: 2
-	};
+TinyTinyRSS.prototype.setArticleUnstarred = function(article, callback) {
+	this.setArticlesUnstarred([article], callback);
+};
 
-	if (navigator.onLine) this.doOperation("updateArticle", options);
-	else {
-		var unread_articles = localStorage.unread_articles;
-		if (typeof unread_articles !== "undefined") unread_articles = JSON.parse(unread_articles);
-		else unread_articles = [];
-		unread_articles.push(article_id);
-		localStorage.unread_articles = JSON.stringify(unread_articles);
-	}
+TinyTinyRSS.prototype.append = function(key, array) {
+
+	var tmp = localStorage[key];
+
+	if (typeof tmp !== "undefined") tmp = JSON.parse(tmp);
+	else tmp = [];
+
+	tmp.concat(options.items);
+	localStorage[key] = JSON.stringify(tmp);
 };
 
 TinyTinyRSS.prototype.logOut = function() {

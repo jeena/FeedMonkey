@@ -13,7 +13,7 @@ App.prototype.authenticate = function() {
 	
 };
 
-App.prototype.after_login = function() {
+App.prototype.after_login = function(backend) {
 
 	var request = window.navigator.mozApps.getSelf();
 	request.onsuccess = function() {
@@ -92,12 +92,16 @@ App.prototype.after_login = function() {
 
 	this.changeToPage("#list");
 
-	this.ttrss = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
+	if(backend == "OwnCloud") {
+		this.backend = new OwnCloud(this, localStorage.server_url, localStorage.session_id);
+	} else {
+		this.backend = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
+	}
 	this.reload();
 };
 
 App.prototype.logout = function() {
-	this.ttrss.logOut();
+	this.backend.logOut();
 	this.unread_articles = [];
 	this.populateList();
 	this.login.log_out();
@@ -131,7 +135,7 @@ App.prototype.setColor = function(color) {
 App.prototype.reload = function() {
 	this.unread_articles = [];
 	$("#all-read").innerHTML = "❌";
-	this.ttrss.getUnreadFeeds(this.gotUnreadFeeds.bind(this));
+	this.backend.reload(this.gotUnreadFeeds.bind(this));
 };
 
 App.prototype.gotUnreadFeeds = function(new_articles) {
@@ -149,7 +153,7 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
 		this.unread_articles = this.unread_articles.concat(new_articles);
 
 		if(new_articles.length > 0) {
-			this.ttrss.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles.length);
+			this.backend.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles);
 		} else {
 			localStorage.unread_articles = JSON.stringify(this.unread_articles);
 			this.populateList();
@@ -210,7 +214,9 @@ App.prototype.updateList = function() {
 	this.updatePieChart();
 };
 
-App.prototype.updatePieChart = function(all, unread) {
+App.prototype.updatePieChart = function() {
+
+	if(!this.unread_articles) return; // happens on loginpage
 
 	var all = this.unread_articles.length;
 	var unread = 0;
@@ -312,7 +318,7 @@ App.prototype.setCurrentRead = function() {
 	if(!article.set_unread) {
 		article.unread = false;
 		this.updateList();
-		this.ttrss.setArticleRead(article.id);
+		this.backend.setArticleRead(article);
 	}
 
 	article.set_unread = false;
@@ -335,39 +341,39 @@ App.prototype.toggleCurrentUnread = function() {
 	}
 
 	this.updateList();
-	this.ttrss.setArticleUnread(article.id);
+	this.backend.setArticleUnread(article);
 };
 
 App.prototype.toggleAllRead = function() {
 
 	if($("#all-read").innerHTML == "❌") { // set all read
 
-		var ids = [];
+		var articles = [];
 		for (var i = 0; i < this.unread_articles.length; i++) {
 			var article = this.unread_articles[i];
 			article.unread = false;
 			article.set_unread = false;
-			ids.push(article.id);
+			articles.push(article);
 		}
 		$("#all-read").innerHTML = "&#10003;";
 
 		this.updateList();
 
-		this.ttrss.setArticleRead(ids.join(","));
+		this.backend.setArticlesRead(articles);
 
 	} else {
 
-		var ids = [];
+		var articles = [];
 		for (var i = 0; i < this.unread_articles.length; i++) {
 			var article = this.unread_articles[i];
 			article.unread = true;
 			article.set_unread = false;
-			ids.push(article.id);
+			articles.push(article);
 		}
 		$("#all-read").innerHTML = "&#10060;";
 		this.updateList();
 
-		this.ttrss.setArticleUnread(ids.join(","));
+		this.backend.setArticlesUnread(articles);
 
 	}
 };
@@ -379,13 +385,13 @@ App.prototype.toggleStarred = function() {
 	if(!article.marked) {
 		article.marked = true;
 		this.updateList();
-		this.ttrss.setArticleStarred(article.id);
+		this.backend.setArticleStarred(article);
 		$("#setstarred").innerHTML = "&#9733;";
 	}
 	else {
 		article.marked = false;
 		this.updateList();
-		this.ttrss.setArticleUnStarred(article.id);
+		this.backend.setArticleUnstarred(article);
 		$("#setstarred").innerHTML = "&#9734;";
 	}
 

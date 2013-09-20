@@ -73,6 +73,11 @@ button:active, a:active, .button:active {
 	padding: 10px 20px;
 }
 
+#login .backends label {
+	display: block;
+	margin-bottom: 1px;
+}
+
 label {
 	display: none;
 }
@@ -130,7 +135,7 @@ img {
 }
 
 @media screen and (width: 320px) {
-	#full > article * {
+	#full > article * , #full > article pre {
 		max-width: 300px !important;
 		overflow: auto;
 	}
