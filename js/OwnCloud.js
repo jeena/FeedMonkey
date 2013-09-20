@@ -203,7 +203,7 @@ OwnCloud.prototype.normalize_article = function(article) {
 		content: article.body,
 		feed_title: feed_title,
 		feed_id: article.feedId,
-		excerpt: article.body.stripHTML().substring(0, 50),
+		excerpt: article.body.stripHTML().substring(0, 100),
 		updated: article.pubDate,
 		link: article.link,
 		marked: article.starred,
