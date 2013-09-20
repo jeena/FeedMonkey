@@ -3,9 +3,8 @@ function OwnCloud(app, server_url, user_pass_btoa) {
 	this.server_url = server_url;
 	this.session_id = user_pass_btoa;
 	this.feeds = {};
-	if(localStorage.feeds) {
-		this.feeds = JSON.parse(localStorage.feeds);
-	}
+	var feeds = localStorage.feeds;
+	if(feeds) this.feeds = JSON.parse(feeds);
 	
 	window.addEventListener("offline", this.onoffline.bind(this));
 	window.addEventListener("online", this.ononline.bind(this));
@@ -16,22 +15,14 @@ OwnCloud.prototype.onoffline = function() {
 };
 
 OwnCloud.prototype.ononline = function() {
-	var read_articles = localStorage.read_articles;
-	if (read_articles ) {
-		read_articles = JSON.parse(localStorage.read_articles);
-		this.setArticleRead(read_articles.join(","), function() {
-			localStorage.read_articles = null;
-		});
-	}
 
-	var unread_articles = localStorage.unread_articles;
-	if (unread_articles) {
-		unread_articles = JSON.parse(unread_articles);
-		this.setArticleUnread(unread_articles.join(","), function() {
-			localStorage.unread_articles();
-		});		
-	}
-
+	["read", "unread", "starred", "unstarred"].forEach(function(type) {
+		var articles = localStorage[type + "_articles"];
+		if(articles) {
+			var callback = function(ok) { if(ok) localStorage[type + "_articles"] = null }
+			this.call("setArticles" + type.capitalize(), [JSON.parse(articles), callback]);
+		}
+	});
 };
 
 OwnCloud.prototype.doOperation = function(method, operation, new_options, callback) {
@@ -69,12 +60,15 @@ OwnCloud.prototype.doOperation = function(method, operation, new_options, callba
 	}
 	xhr.open(method, url, true);
 	xhr.withCredentials = true;
-	//var auth = btoa(user + ':' + password);
 	xhr.setRequestHeader('Authorization', 'Basic ' + this.session_id);
 	var body = JSON.stringify(options);
-	console.log(body)
 	xhr.send(body);
 }
+
+OwnCloud.prototype.reload = function(callback) {
+	var _this = this;
+	this.getFeeds(function() { _this.getUnreadFeeds(callback); });
+};
 
 OwnCloud.prototype.getUnreadFeeds = function(callback, skip) {
 	if(skip) {
@@ -90,8 +84,6 @@ OwnCloud.prototype.getUnreadFeeds = function(callback, skip) {
 	};
 
 	var _this = this;
-	console.log(_this.toString())
-
 	this.doOperation("GET", "items", options, function(data) {
 		var items = data.items;
 
@@ -130,66 +122,72 @@ OwnCloud.prototype.getFeeds = function(callback) {
 	});
 };
 
-OwnCloud.prototype.setArticleRead = function(article_id, callback) {
-	var items = [article_id];
-	if(typeof article_id == "string") items = article_id.split(",");
+OwnCloud.prototype.setArticlesRead = function(articles, callback) {
 
 	var options = {
-		items: items,
+		items: articles.map(function(o) { return o.id; }),
 	};
 
 	if (navigator.onLine) {
 		this.doOperation("PUT", "items/read/multiple", options, callback);
 	} else {
-		var read_articles = localStorage.read_articles;
-		if(typeof read_articles !== "undefined") read_articles = JSON.parse(read_articles);
-		else read_articles = [];
-		read_articles.concat(options.items);
-		localStorage.read_articles = JSON.stringify(read_articles);
+		this.append("read_articles", articles);
 	}
-};
+}
 
-OwnCloud.prototype.setArticleUnread = function(article_id, callback) {
-	var items = [article_id];
-	if(typeof article_id == "string") items = article_id.split(",");
+OwnCloud.prototype.setArticleRead = function(article, callback) {
+	this.setArticlesRead([article], callback);
+}
 
+OwnCloud.prototype.setArticlesUnread = function(articles, callback) {
+	
 	var options = {
-		items: items,
+		items: articles.map(function(o) { return o.id; }),
 	};
 
 	if (navigator.onLine) this.doOperation("PUT", "items/unread/multiple", options, callback);
 	else {
-		var unread_articles = localStorage.unread_articles;
-		if (typeof unread_articles !== "undefined") unread_articles = JSON.parse(unread_articles);
-		else unread_articles = [];
-		unread_articles.concat(options.items);
-		localStorage.unread_articles = JSON.stringify(unread_articles);
+		this.append("unread_articles", articles);
 	}
 };
 
-OwnCloud.prototype.setArticleStarred = function(article_id) {
+OwnCloud.prototype.setArticleUnread = function(article, callback) {
+	this.setArticlesUnread([article], callback);
+}
+
+OwnCloud.prototype.setArticlesStarred = function(articles, callback) {
+	console.log(JSON.stringify(articles))
 	var options = {
-		article_ids: article_id,
-		mode: 1,
-		field: 0
+		items: articles.map(function(o) { return { feedId: o.feed_id, guidHash: o.guid_hash }; })
 	};
 
 	if (navigator.onLine) {
-		this.doOperation("updateArticle", options);
-	} 
+		this.doOperation("PUT", "items/star/multiple", options, callback);
+	} else {
+		this.append("starred_articles", articles);
+	}
 };
 
-OwnCloud.prototype.setArticleUnStarred = function(article_id) {
+OwnCloud.prototype.setArticleStarred = function(article, callback) {
+	this.setArticlesStarred([article], callback);
+}
+
+OwnCloud.prototype.setArticlesUnstarred = function(articles, callback) {
+
 	var options = {
-		article_ids: article_id,
-		mode: 0,
-		field: 0
+		items: articles.map(function(o) { return { feedId: o.feed_id, guidHash: o.guid_hash }; })
 	};
 
 	if (navigator.onLine) {
-		this.doOperation("updateArticle", options);
-	} 
+		this.doOperation("PUT", "items/unstar/multiple", options, callback);
+	} else {
+		this.append("unstarred_articles", articles);
+	}
 };
+
+OwnCloud.prototype.setArticleUnstarred = function(articles, callback) {
+	this.setArticlesUnstarred([articles], callback);
+}
 
 OwnCloud.prototype.normalize_article = function(article) {
 	var feed = this.feeds[article.feedId];
@@ -200,6 +198,7 @@ OwnCloud.prototype.normalize_article = function(article) {
 
 	return {
 		id: article.id,
+		guid_hash: article.guidHash,
 		title: article.title,
 		content: article.body,
 		feed_title: feed_title,
@@ -218,6 +217,17 @@ OwnCloud.prototype.logOut = function() {
 
 OwnCloud.prototype.getFeedFor = function(o) {
 	return this.feeds[o.feedId];
+};
+
+OwnCloud.prototype.append = function(key, array) {
+
+	var tmp = localStorage[key];
+
+	if (typeof tmp !== "undefined") tmp = JSON.parse(tmp);
+	else tmp = [];
+
+	tmp.concat(options.items);
+	localStorage[key] = JSON.stringify(tmp);
 };
 
 OwnCloud.login = function(server_url, user, password, callback) {

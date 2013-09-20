@@ -25,6 +25,9 @@ Login.prototype.authenticate = function(e) {
 	e.preventDefault();
  	e.stopPropagation();
 
+ 	var backend = "TinyTinyRSS";
+ 	if($("#login form").backend[1].checked) backend = "OwnCloud";
+
 	var server_url = $("#url").value;
 	var user = $("#un").value;
 	var password = $("#pw").value;
@@ -44,7 +47,8 @@ Login.prototype.authenticate = function(e) {
 	} 
 
 	var _this = this;
-	if(true) {
+
+	if(backend == "OwnCloud") {
 		OwnCloud.login(server_url, user, password, function(data) {
 			if(data.version) {
 				var auth = btoa(user + ':' + password);

@@ -50,5 +50,9 @@ String.prototype.stripHTML = function() {
 	return this.replace(/(<([^>]+)>)/ig, "");
 }
 
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
 if(!window.app) window.app = new App();
 
