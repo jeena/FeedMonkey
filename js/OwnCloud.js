@@ -2,7 +2,11 @@ function OwnCloud(app, server_url, user_pass_btoa) {
 	this.app = app;
 	this.server_url = server_url;
 	this.session_id = user_pass_btoa;
-
+	this.feeds = {};
+	if(localStorage.feeds) {
+		this.feeds = JSON.parse(localStorage.feeds);
+	}
+	
 	window.addEventListener("offline", this.onoffline.bind(this));
 	window.addEventListener("online", this.ononline.bind(this));
 }
@@ -67,7 +71,9 @@ OwnCloud.prototype.doOperation = function(method, operation, new_options, callba
 	xhr.withCredentials = true;
 	//var auth = btoa(user + ':' + password);
 	xhr.setRequestHeader('Authorization', 'Basic ' + this.session_id);
-	xhr.send(JSON.stringify(options));
+	var body = JSON.stringify(options);
+	console.log(body)
+	xhr.send(body);
 }
 
 OwnCloud.prototype.getUnreadFeeds = function(callback, skip) {
@@ -84,36 +90,80 @@ OwnCloud.prototype.getUnreadFeeds = function(callback, skip) {
 	};
 
 	var _this = this;
+	console.log(_this.toString())
+
 	this.doOperation("GET", "items", options, function(data) {
 		var items = data.items;
-		// FIXME
-		/*
-		var feeds = {};
+
+		function isFeedAvailable(o) {
+			return !!_this.feeds[o.feedId];
+		}
+
+		if(items.every(isFeedAvailable)) {
+			callback(items.map(_this.normalize_article, _this));
+		} else {
+			_this.getFeeds(function() {
+				callback(items.map(_this.normalize_article, _this));
+			});
+		}
+	});
+};
+
+
+OwnCloud.prototype.toString = function() {
+	return "OwnCloud"
+};
+
+OwnCloud.prototype.getFeeds = function(callback) {
+	var _this = this;
+	this.doOperation("GET", "feeds", {}, function(data) {
+		
+		this.feeds = {};
 		for (var i = 0; i < data.feeds.length; i++) {
 			var feed = data.feeds[i];
-			feeds[feed.id] = feed;
+			this.feeds[feed.id] = feed;
 		}
-		*/
 
-		callback(items.map(_this.normalize_article));
+		localStorage.feeds = JSON.stringify(this.feeds);
+
+		callback();
 	});
-}
+};
 
-OwnCloud.prototype.setArticleRead = function(article_id) {
+OwnCloud.prototype.setArticleRead = function(article_id, callback) {
+	var items = [article_id];
+	if(typeof article_id == "string") items = article_id.split(",");
+
 	var options = {
-		article_ids: article_id,
-		mode: 0,
-		field: 2
+		items: items,
 	};
 
 	if (navigator.onLine) {
-		this.doOperation("updateArticle", options);
+		this.doOperation("PUT", "items/read/multiple", options, callback);
 	} else {
 		var read_articles = localStorage.read_articles;
 		if(typeof read_articles !== "undefined") read_articles = JSON.parse(read_articles);
 		else read_articles = [];
-		read_articles.push(article_id);
+		read_articles.concat(options.items);
 		localStorage.read_articles = JSON.stringify(read_articles);
+	}
+};
+
+OwnCloud.prototype.setArticleUnread = function(article_id, callback) {
+	var items = [article_id];
+	if(typeof article_id == "string") items = article_id.split(",");
+
+	var options = {
+		items: items,
+	};
+
+	if (navigator.onLine) this.doOperation("PUT", "items/unread/multiple", options, callback);
+	else {
+		var unread_articles = localStorage.unread_articles;
+		if (typeof unread_articles !== "undefined") unread_articles = JSON.parse(unread_articles);
+		else unread_articles = [];
+		unread_articles.concat(options.items);
+		localStorage.unread_articles = JSON.stringify(unread_articles);
 	}
 };
 
@@ -141,31 +191,19 @@ OwnCloud.prototype.setArticleUnStarred = function(article_id) {
 	} 
 };
 
-OwnCloud.prototype.setArticleUnread = function(article_id) {
-	var options = {
-		article_ids: article_id,
-		mode: 1,
-		field: 2
-	};
-
-	if (navigator.onLine) this.doOperation("updateArticle", options);
-	else {
-		var unread_articles = localStorage.unread_articles;
-		if (typeof unread_articles !== "undefined") unread_articles = JSON.parse(unread_articles);
-		else unread_articles = [];
-		unread_articles.push(article_id);
-		localStorage.unread_articles = JSON.stringify(unread_articles);
-	}
-};
-
 OwnCloud.prototype.normalize_article = function(article) {
-	var feeds = this;
+	var feed = this.feeds[article.feedId];
+	var feed_title = "";
+	if(feed) {
+		feed_title = feed.title;
+	}
 
 	return {
 		id: article.id,
 		title: article.title,
 		content: article.body,
-		feed_title: "", // FIXME: feeds[article.feedId].title,
+		feed_title: feed_title,
+		feed_id: article.feedId,
 		excerpt: article.body.stripHTML().substring(0, 50),
 		updated: article.pubDate,
 		link: article.link,
@@ -176,6 +214,10 @@ OwnCloud.prototype.normalize_article = function(article) {
 
 OwnCloud.prototype.logOut = function() {
 	this.doOperation("logout");
+};
+
+OwnCloud.prototype.getFeedFor = function(o) {
+	return this.feeds[o.feedId];
 };
 
 OwnCloud.login = function(server_url, user, password, callback) {
