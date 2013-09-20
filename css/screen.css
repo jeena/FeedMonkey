@@ -73,7 +73,7 @@ button:active, a:active, .button:active {
 	padding: 10px 20px;
 }
 
-#login .backends label {
+#login .backends label, #login p:not(.backends) input {
 	display: block;
 	margin-bottom: 1px;
 }
