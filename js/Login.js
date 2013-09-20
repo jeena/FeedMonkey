@@ -17,6 +17,17 @@ Login.prototype.is_logged_in = function() {
 
 Login.prototype.log_in = function() {
 	this.app.changeToPage("#login");
+	$("#login form").backend.forEach(function(o, i) {
+		o.addEventListener("change", function(e) {
+			if(e.target.checked) {
+				if(e.target.value == "OwnCloud") {
+					$("#url").placeholder = "http://example.com/owncloud/";
+				} else {
+					$("#url").placeholder = "http://example.com/tt-rss/";
+				}
+			}
+		});
+	});
 	$("#login form").addEventListener('submit', this.authenticate.bind(this));
 };
 
