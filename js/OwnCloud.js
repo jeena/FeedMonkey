@@ -85,6 +85,7 @@ OwnCloud.prototype.getUnreadFeeds = function(callback, skip) {
 
 	var _this = this;
 	this.doOperation("GET", "items", options, function(data) {
+		
 		var items = data.items;
 
 		function isFeedAvailable(o) {
@@ -110,14 +111,13 @@ OwnCloud.prototype.getFeeds = function(callback) {
 	var _this = this;
 	this.doOperation("GET", "feeds", {}, function(data) {
 		
-		this.feeds = {};
+		_this.feeds = {};
 		for (var i = 0; i < data.feeds.length; i++) {
 			var feed = data.feeds[i];
-			this.feeds[feed.id] = feed;
+			_this.feeds[feed.id] = feed;
 		}
 
 		localStorage.feeds = JSON.stringify(this.feeds);
-
 		callback();
 	});
 };
@@ -156,7 +156,7 @@ OwnCloud.prototype.setArticleUnread = function(article, callback) {
 }
 
 OwnCloud.prototype.setArticlesStarred = function(articles, callback) {
-	console.log(JSON.stringify(articles))
+	
 	var options = {
 		items: articles.map(function(o) { return { feedId: o.feed_id, guidHash: o.guid_hash }; })
 	};
