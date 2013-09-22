@@ -249,6 +249,16 @@ App.prototype.updatePieChart = function() {
 			ctx.fill();
 			lastend += Math.PI*2*(data[i]/myTotal);
 		}
+
+		if(all > 0) {
+			ctx.font =  "12px FeuraSans, sans-serif";
+			ctx.fillStyle = "#fff";
+			ctx.textAlign = "center";
+			var text = unread + "/" + all;
+			var x = canvas.width / 2;
+			var y = canvas.height / 2 + 4;
+			ctx.fillText(text, x, y, canvas.width-6);			
+		}
 	})
 };
 
