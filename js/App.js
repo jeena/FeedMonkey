@@ -179,9 +179,7 @@ App.prototype.populateList = function() {
 		var article = this.unread_articles[i];
 		html_str += "<li"+ (article.unread ? " class='unread'" : "") +">";
 		html_str += "<a href='#full-"+i+"'>";
-		html_str += "<p class='title'>";
-		html_str += "<strong>" + article.feed_title + "</strong>";
-		html_str += "</p>";
+		html_str += "<p class='title'>" + article.feed_title + "</p>";
 		html_str += "<h2>" + article.title + "</h2>";
 		if(article.excerpt)	html_str += "<p class='excerpt'>" + article.excerpt + "</p>";
 		html_str += "</a></li>";
