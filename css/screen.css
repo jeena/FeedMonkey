@@ -354,7 +354,7 @@ canvas {
 	color: #2c3e50;
 }
 
-#settings .version {
+#settings .version, #settings .reset-info {
 	padding-top: 1em;
 }
 
