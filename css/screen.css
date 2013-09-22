@@ -171,14 +171,12 @@ canvas {
 	margin: 0;
 	padding: 0;
 	font-size: 0.8em;
-}
-
-#list p {
 	font-weight: normal;
 	text-overflow: ellipsis;
 	display: block;
 	white-space: nowrap;
 	overflow: hidden;
+	opacity: .6;
 }
 
 #list h2 {
