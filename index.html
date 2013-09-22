@@ -18,15 +18,15 @@
 <body>
 
 <section id="list" class="active">
+  <header class="bar">
+    <a class="button icon settings" href="#settings">&#9881;</a>
+    <a class="button icon reload" href="#reload">&#128260;</a>
+    <a class="button icon all-read" href="#all-read" id="all-read">❌</a>
+    <canvas width="40" height="40"></canvas>
+  </header>
   <article>
     <ul></ul>
   </article>
-  <footer class="bar">
-    <a class="button icon" href="#reload">&#128260;</a>
-    <a class="button icon" href="#all-read" id="all-read">❌</a>
-    <a class="button icon" href="#settings">&#9881;</a>
-    <canvas width="40" height="40"></canvas>
-  </footer>
 </section>
 
 <section id="settings">
@@ -83,9 +83,9 @@
 
 <section id="full">
   <header class="bar">
-    <a class="button icon" href="#list">&#57349;</a>
-    <a id="setunread" class="button icon" href="#unread">✓</a>
+    <a class="button icon list" href="#list">&#57349;</a>
     <a id="setstarred" class="button icon" href="#starred">&#9734;</a>
+    <a id="setunread" class="button icon" href="#unread">✓</a>
     <canvas width="40" height="40"></canvas>
   </header>
   <article>

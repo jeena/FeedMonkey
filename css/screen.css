@@ -120,6 +120,15 @@ section > header h1 {
 	overflow: auto;
 }
 
+.reload, .all-read, #setstarred, #setunread {
+	float: right;
+	margin-left: 10px;
+}
+
+.settings, .list {
+	float: left;
+}
+
 section > footer {
 	padding: 10px;
 	position: fixed;
