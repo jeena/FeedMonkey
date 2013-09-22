@@ -117,7 +117,7 @@ OwnCloud.prototype.getFeeds = function(callback) {
 			_this.feeds[feed.id] = feed;
 		}
 
-		localStorage.feeds = JSON.stringify(this.feeds);
+		localStorage.feeds = JSON.stringify(_this.feeds);
 		callback();
 	});
 };
