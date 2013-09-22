@@ -195,23 +195,6 @@ canvas {
 .blue   #list li { border-bottom: 1px solid #2980b9; }
 .yellow #list li { border-bottom: 1px solid #f39c12; }
 
-/* read items get subdued text and arrow color */
-.red #list li a, .red #list li:after {
-	color: #c0392b;
-}
-.white #list li a, .white #list li:after {
-	color: #bdc3c7;
-}
-.blue #list li a, .blue #list li:after {
-	color: #2980b9;
-}
-.yellow #list li a, .yellow #list li:after {
-	color: #f39c12;
-}
-#list li.unread a, #list li.unread:after {
-	color: inherit;
-}
-
 #list li:after {
 	content: "";
 	position: absolute;
@@ -222,11 +205,20 @@ canvas {
 	font-family: "Entypo";
 }
 
+.red    #list li:after { color: #c0392b; }
+.white  #list li:after { color: #bdc3c7; }
+.blue   #list li:after { color: #2980b9; }
+.yellow #list li:after { color: #f39c12; }
+
 #list li > a {
 	display: block;
 	padding: 5px 25px 5px 10px;
 	text-decoration: none;
 	outline: none;
+}
+
+#list li.unread:after {
+	color: inherit;
 }
 
 #full.active {
