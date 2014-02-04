@@ -131,6 +131,8 @@ Pond.prototype.normalizeArticle = function(article) {
 
 	var excerpt = article.summary.content.htmlDecode();
 	if(!excerpt || excerpt.length < 1) excerpt = content;
+	
+	var timestamp = new Date(article.published_at).getTime() / 1000;
 
 	return {
 		id: article.id,
@@ -140,7 +142,7 @@ Pond.prototype.normalizeArticle = function(article) {
 		feed_title: feed_title,
 		feed_id: article.subscription_id,
 		excerpt: excerpt.stripHTML().substring(0, 100),
-		updated: article.published_at,
+		updated: timestamp,
 		link: article.url,
 		marked: false, // not implemented in Pond server yet
 		unread: !article.read
