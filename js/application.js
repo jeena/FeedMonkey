@@ -49,6 +49,12 @@ String.prototype.escapeHTML = function() {
     });
 }
 
+String.prototype.htmlDecode = function() {
+	var e = document.createElement('div');
+	e.innerHTML = this;
+	return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+}
+
 String.prototype.stripHTML = function() {
 	return this.replace(/(<([^>]+)>)/ig, "");
 }

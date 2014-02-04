@@ -83,7 +83,7 @@ Login.prototype.authenticate = function(e) {
 		Pond.login(server_url, user, password, function(data) {
 			if(data.session_token) {
 				localStorage.server_url = server_url;
-				localStorage.session_token = data.session_token;
+				localStorage.session_id = data.session_token;
 				localStorage.backend = "Pond";
 				_this.app.after_login(localStorage.backend);
 

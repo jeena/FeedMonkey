@@ -46,7 +46,7 @@ OwnCloud.prototype.doOperation = function(method, operation, new_options, callba
 		url += "?" + a.join("&");
 	}
 
-	var xhr = new XMLHttpRequest();
+	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState == 4) {
 			if(xhr.status == 200) {
@@ -213,6 +213,7 @@ OwnCloud.prototype.normalize_article = function(article) {
 
 OwnCloud.prototype.logOut = function() {
 	this.doOperation("logout");
+	localStorage.feeds = null;
 };
 
 OwnCloud.prototype.getFeedFor = function(o) {
@@ -234,7 +235,7 @@ OwnCloud.login = function(server_url, user, password, callback) {
 	
 	var url = server_url + "/index.php/apps/news/api/v1-2/version";
 
-	var xhr = new XMLHttpRequest();
+	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState == 4) {
 			if(xhr.status == 200) {

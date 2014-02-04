@@ -94,6 +94,8 @@ App.prototype.after_login = function(backend) {
 
 	if(backend == "OwnCloud") {
 		this.backend = new OwnCloud(this, localStorage.server_url, localStorage.session_id);
+	} else if (backend == "Pond") {
+		this.backend = new Pond(this, localStorage.server_url, localStorage.session_id)
 	} else {
 		this.backend = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
 	}
@@ -283,6 +285,9 @@ App.prototype.showFull = function(article, slide_back) {
 		$(page_id + " .author").innerHTML = "&ndash; " + article.author; 
 
 	$(page_id + " .article").innerHTML = article.content;
+	$$(page_id + " .article a").forEach(function(o, i) {
+		o.target = "_blank";
+	});
 
 	if(article.unread) {
 		$("#setunread").innerHTML = "❌";
