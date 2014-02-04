@@ -22,6 +22,8 @@ Login.prototype.log_in = function() {
 			if(e.target.checked) {
 				if(e.target.value == "OwnCloud") {
 					$("#url").placeholder = "http://example.com/owncloud/";
+				} else if(e.target.value == "Pond") {
+					$("#url").placeholder = "http://example.com/pond/";
 				} else {
 					$("#url").placeholder = "http://example.com/tt-rss/";
 				}
@@ -38,6 +40,7 @@ Login.prototype.authenticate = function(e) {
 
  	var backend = "TinyTinyRSS";
  	if($("#login form").backend[1].checked) backend = "OwnCloud";
+ 	else if($("#login form").backend[2].checked) backend = "Pond";
 
 	var server_url = $("#url").value;
 	var user = $("#un").value;
@@ -73,6 +76,20 @@ Login.prototype.authenticate = function(e) {
 				$("#pw").value = "";
 			} else {
 				alert("Something went wrong, please check every input field and try again.");
+			}
+		});
+	} else if(backend == "Pond") {
+
+		Pond.login(server_url, user, password, function(data) {
+			if(data.session_token) {
+				localStorage.server_url = server_url;
+				localStorage.session_token = data.session_token;
+				localStorage.backend = "Pond";
+				_this.app.after_login(localStorage.backend);
+
+				$("#url").value = "";
+				$("#un").value = "";
+				$("#pw").value = "";
 			}
 		});
 

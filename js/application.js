@@ -1,6 +1,9 @@
 function debug(obj) {
 	if(typeof obj != "string")
 		obj = JSON.stringify(obj);
+	else {
+		obj = arguments.join(' ')
+	}
 	
 	alert(obj)
 }
