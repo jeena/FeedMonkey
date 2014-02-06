@@ -182,8 +182,10 @@ App.prototype.populateList = function() {
 		html_str += "<li"+ (article.unread ? " class='unread'" : "") +">";
 		html_str += "<a href='#full-"+i+"'>";
 		html_str += "<p class='title'>" + article.feed_title + "</p>";
-		html_str += "<h2>" + article.title + "</h2>";
-		if(article.excerpt)	html_str += "<p class='excerpt'>" + article.excerpt + "</p>";
+		var content = article.content.stripHTML();
+		if(content.replace(/^\s+|\s+$/g,'').length == 0) content = article.title;
+		html_str += "<h2>" + content + "</h2>";
+		//if(article.excerpt)	html_str += "<p class='excerpt'>" + article.excerpt + "</p>";
 		html_str += "</a></li>";
 	}
 	

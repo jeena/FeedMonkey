@@ -76,7 +76,7 @@ Pond.prototype.reload = function(callback) {
 
 Pond.prototype.getUnreadFeeds = function(callback, skip) {
 	var options = {
-		status: "unread",
+		status: "all",
 		limit: 100
 	};
 
@@ -133,6 +133,8 @@ Pond.prototype.normalizeArticle = function(article) {
 	if(!excerpt || excerpt.length < 1) excerpt = content;
 	
 	var timestamp = new Date(article.published_at).getTime() / 1000;
+
+	console.log(article.read)
 
 	return {
 		id: article.id,

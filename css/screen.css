@@ -188,6 +188,7 @@ canvas {
 
 #list li {
 	position: relative;
+	min-height: 3em;
 }
 
 .red    #list li { border-bottom: 1px solid #c0392b; }
@@ -199,7 +200,7 @@ canvas {
 	content: "";
 	position: absolute;
 	right: 7px;
-	top: 0.1em;
+	top: 0;
 	font-weight: 100;
 	font-size: 3em;
 	font-family: "Entypo";
@@ -248,6 +249,7 @@ canvas {
 	font-weight: normal;
 	margin: 0;
 	padding: 0;
+	display: none;
 }
 
 #full .wrapper {
@@ -276,6 +278,20 @@ canvas {
 #full article header p {
 	margin: 0;
 	padding: 0;
+}
+
+#full article header p:nth-child(1) {
+	float: left;
+}
+
+#full article header p:nth-child(3) {
+	float: right;
+}
+
+#full .article {
+	clear: both;
+	padding-top: 1em;
+	font-size: 1.3em;
 }
 
 #full footer.bar {
