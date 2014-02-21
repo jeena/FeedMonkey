@@ -7,6 +7,16 @@ function App() {
 	if(!color) color = "red";
 	this.setColor(color);
 	this.fontChange();
+
+	var _this = this;
+
+	window.onkeydown = function(e) {
+		if(e.keyCode == 39) {
+			_this.showNext();
+		} else if(e.keyCode == 37) {
+			_this.showPrevious();
+		}
+	}
 };
 
 App.prototype.authenticate = function() {
@@ -276,9 +286,9 @@ App.prototype.showFull = function(article, slide_back) {
 
 	$(page_id + " .date").innerHTML = (new Date(parseInt(article.updated, 10) * 1000)).toLocaleString();
 
-	var title = $(page_id + " .title");
-	title.innerHTML = article.title;
-	title.href = article.link;
+	var link = $(page_id + " .link");
+	link.innerHTML = article.link;
+	link.href = article.link;
 
 	$(page_id + " .feed_title").innerHTML = article.feed_title;
 
@@ -286,7 +296,9 @@ App.prototype.showFull = function(article, slide_back) {
 	if(article.author && article.author.length > 0)
 		$(page_id + " .author").innerHTML = "&ndash; " + article.author; 
 
-	$(page_id + " .article").innerHTML = article.content;
+	var content = article.content;
+	if(content.replace(/^\s+|\s+$/g,'').length == 0) content = article.title;
+	$(page_id + " .article").innerHTML = content;
 	$$(page_id + " .article a").forEach(function(o, i) {
 		o.target = "_blank";
 	});

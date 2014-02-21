@@ -165,6 +165,7 @@ canvas {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
+	word-wrap: break-word;
 }
 
 #list p {
@@ -284,8 +285,12 @@ canvas {
 	float: left;
 }
 
-#full article header p:nth-child(3) {
+#full article header p:nth-child(2) {
 	float: right;
+}
+
+#full article header p:nth-child(3) {
+	clear: both;
 }
 
 #full .article {
