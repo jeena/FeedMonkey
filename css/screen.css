@@ -296,12 +296,14 @@ canvas {
 #full .article {
 	clear: both;
 	padding-top: 1em;
+	padding-bottom: 2.8em;
 	font-size: 1.3em;
 }
 
 #full footer.bar {
+	bottom: 0;
 	margin: auto 0 0 0;
-	position: relative;
+	position: fixed;
 	height: 3.8em;
 }
 

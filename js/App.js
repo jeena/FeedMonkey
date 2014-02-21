@@ -24,7 +24,6 @@ App.prototype.authenticate = function() {
 };
 
 App.prototype.after_login = function(backend) {
-
 	/*
 	var request = window.navigator.mozApps.getSelf();
 	request.onsuccess = function() {
@@ -32,6 +31,7 @@ App.prototype.after_login = function(backend) {
 			$("#version").innerHTML = request.result.manifest.version;
 		}
 	}*/
+
 
 	var _this = this;
 
