@@ -14,11 +14,12 @@ App.prototype.authenticate = function() {
 };
 
 App.prototype.after_login = function(backend) {
-
+	/*
 	var request = window.navigator.mozApps.getSelf();
 	request.onsuccess = function() {
 		$("#version").innerHTML = request.result.manifest.version;
 	}
+	*/
 
 	var _this = this;
 
