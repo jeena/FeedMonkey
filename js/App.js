@@ -15,6 +15,10 @@ function App() {
 			_this.showNext();
 		} else if(e.keyCode == 37) {
 			_this.showPrevious();
+		} else if(e.keyCode == 13) {
+			_this.openInBrowser();
+		} else if(e.keyCode == 82) {
+			_this.reload();
 		}
 	}
 };
@@ -298,7 +302,7 @@ App.prototype.showFull = function(article, slide_back) {
 
 	var content = article.content;
 	if(content.replace(/^\s+|\s+$/g,'').length == 0) content = article.title;
-	$(page_id + " .article").innerHTML = content;
+	$(page_id + " .article").innerHTML = content.urlify();
 	$$(page_id + " .article a").forEach(function(o, i) {
 		o.target = "_blank";
 	});
@@ -337,6 +341,10 @@ App.prototype.showPrevious = function() {
 		this.currentIndex--;
 		this.showFull(this.unread_articles[this.currentIndex], true);
 	}
+};
+
+App.prototype.openInBrowser = function() {
+	$("#full .link").click();
 };
 
 App.prototype.setCurrentRead = function() {
