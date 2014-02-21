@@ -63,5 +63,10 @@ String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
+String.prototype.urlify = function() {
+    var exp = /^\>(\b(http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return this.replace(exp,"<a href='$1'>$1</a>");
+}
+
 if(!window.app) window.app = new App();
 

@@ -17,19 +17,6 @@ Login.prototype.is_logged_in = function() {
 
 Login.prototype.log_in = function() {
 	this.app.changeToPage("#login");
-	$("#login form").backend.forEach(function(o, i) {
-		o.addEventListener("change", function(e) {
-			if(e.target.checked) {
-				if(e.target.value == "OwnCloud") {
-					$("#url").placeholder = "http://example.com/owncloud/";
-				} else if(e.target.value == "Pond") {
-					$("#url").placeholder = "http://example.com/pond/";
-				} else {
-					$("#url").placeholder = "http://example.com/tt-rss/";
-				}
-			}
-		});
-	});
 	$("#login form").addEventListener('submit', this.authenticate.bind(this));
 };
 
@@ -38,11 +25,10 @@ Login.prototype.authenticate = function(e) {
 	e.preventDefault();
  	e.stopPropagation();
 
- 	var backend = "TinyTinyRSS";
- 	if($("#login form").backend[1].checked) backend = "OwnCloud";
- 	else if($("#login form").backend[2].checked) backend = "Pond";
+ 	var backend = "Pond";
 
-	var server_url = $("#url").value;
+ 	var server_url = window.location.href.split("#")[0].replace(/\/FeedMonkey\//, '');
+ 	console.log(server_url)
 	var user = $("#un").value;
 	var password = $("#pw").value;
 
