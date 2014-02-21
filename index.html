@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="css/screen.css" />
 
   <script src="js/App.js"></script>
+  <script src="js/TinyTinyRSS.js"></script>
+  <script src="js/OwnCloud.js"></script>
   <script src="js/Pond.js"></script>
   <script src="js/md5.js"></script>
   <script src="js/Login.js"></script> 
@@ -62,7 +64,14 @@
       <p class="smallogo">
         <img src="img/icon-128.png" alt="Logo, an ape head">
       </p>
+      <p class="backends">
+        <label class="button"><input type="radio" name="backend" value="TinyTinyRSS" checked="checked" /> Tiny Tiny RSS</label>
+        <label class="button"><input type="radio" name="backend" value="OwnCloud" /> ownCloud News</label>
+        <label class="button"><input type="radio" name="backend" value="Pond" /> Pond</label>
+      </p>
       <p>
+        <label for="url">URL:</label>
+        <input class="button" type="text" name="url" id="url" value="" placeholder="http://example.com/tt-rss/" />
         <label for="un">Username:</label>
         <input class="button" type="text" name="user" id="un" value="" placeholder="username" />          
         <label for="pw">Password:</label>

@@ -7,16 +7,6 @@ function App() {
 	if(!color) color = "red";
 	this.setColor(color);
 	this.fontChange();
-
-	var _this = this;
-
-	window.onkeydown = function(e) {
-		if(e.keyCode == 39) {
-			_this.showNext();
-		} else if(e.keyCode == 37) {
-			_this.showPrevious();
-		}
-	}
 };
 
 App.prototype.authenticate = function() {
@@ -27,11 +17,8 @@ App.prototype.after_login = function(backend) {
 	/*
 	var request = window.navigator.mozApps.getSelf();
 	request.onsuccess = function() {
-		if(request.result) {
-			$("#version").innerHTML = request.result.manifest.version;
-		}
+		$("#version").innerHTML = request.result.manifest.version;
 	}*/
-
 
 	var _this = this;
 
@@ -289,8 +276,8 @@ App.prototype.showFull = function(article, slide_back) {
 
 	$(page_id + " .date").innerHTML = (new Date(parseInt(article.updated, 10) * 1000)).toLocaleString();
 
-	var title = $(page_id + " .link");
-	title.innerHTML = article.link;
+	var title = $(page_id + " .title");
+	title.innerHTML = article.title;
 	title.href = article.link;
 
 	$(page_id + " .feed_title").innerHTML = article.feed_title;
@@ -299,10 +286,7 @@ App.prototype.showFull = function(article, slide_back) {
 	if(article.author && article.author.length > 0)
 		$(page_id + " .author").innerHTML = "&ndash; " + article.author; 
 
-
-	var content = article.content
-	if(content.replace(/^\s+|\s+$/g,'').length == 0) content = article.title;
-	$(page_id + " .article").innerHTML = content.urlify();
+	$(page_id + " .article").innerHTML = article.content;
 	$$(page_id + " .article a").forEach(function(o, i) {
 		o.target = "_blank";
 	});

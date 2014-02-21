@@ -165,7 +165,6 @@ canvas {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	word-wrap: break-word;
 }
 
 #list p {
@@ -285,23 +284,18 @@ canvas {
 	float: left;
 }
 
-#full article header p:nth-child(2) {
-	float: right;
-}
-
 #full article header p:nth-child(3) {
-	clear: both;
+	float: right;
 }
 
 #full .article {
 	clear: both;
 	padding-top: 1em;
-	padding-bottom: 2.8em;
+	padding-bottom: 3em;
 	font-size: 1.3em;
 }
 
 #full footer.bar {
-	bottom: 0;
 	margin: auto 0 0 0;
 	position: fixed;
 	height: 3.8em;

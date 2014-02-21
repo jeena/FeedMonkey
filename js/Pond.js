@@ -46,7 +46,7 @@ Pond.prototype.doOperation = function(method, operation, new_options, callback) 
 		body = a.join("&");
 	}
 
-	var xhr = new XMLHttpRequest();
+	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState == 4) {
 			if(xhr.status == 200) {
@@ -76,7 +76,7 @@ Pond.prototype.reload = function(callback) {
 
 Pond.prototype.getUnreadFeeds = function(callback, skip) {
 	var options = {
-		status: "unread",
+		status: "all",
 		limit: 100
 	};
 
@@ -133,6 +133,8 @@ Pond.prototype.normalizeArticle = function(article) {
 	if(!excerpt || excerpt.length < 1) excerpt = content;
 	
 	var timestamp = new Date(article.published_at).getTime() / 1000;
+
+	console.log(article.read)
 
 	return {
 		id: article.id,
@@ -207,7 +209,7 @@ Pond.login = function(server_url, user, password, callback) {
 	var password_hash = md5(user + ':' + password)
 	var options = "username=" + user.toLowerCase() + "&" + "password=" + password_hash;
 
-	var xhr = new XMLHttpRequest();
+	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState == 4) {
 			if(xhr.status == 201) {
