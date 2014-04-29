@@ -19,5 +19,5 @@
     }
   },
   "installs_allowed_from": ["*"],
-  "version": "0.3.0"
+  "version": "0.3.0_iss30"
 }
