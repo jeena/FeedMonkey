@@ -54,17 +54,18 @@ TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
 	xhr.send(JSON.stringify(options));
 }
 
-TinyTinyRSS.prototype.reload = function(callback) {
-	this.getUnreadFeeds(callback, []);
+TinyTinyRSS.prototype.reload = function(callback,limit) {
+	this.getUnreadFeeds(callback, 0, limit);
 };
 
-TinyTinyRSS.prototype.getUnreadFeeds = function(callback, skip) {
+TinyTinyRSS.prototype.getUnreadFeeds = function(callback, skip, limit) {
 	skip = skip.length;
 	var options = {
 		show_excerpt: false,
 		view_mode: "unread",
 		show_content: true,
 		feed_id: -4,
+		limit: limit || 0,
 		skip: skip || 0
 	};
 
