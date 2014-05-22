@@ -241,7 +241,11 @@ OwnCloud.login = function(server_url, user, password, callback) {
 			if(xhr.status == 200) {
 				callback(JSON.parse(xhr.responseText))
 			} else {
-				alert("error: " + xhr.status + " " + xhr.statusText)
+				if(xhr.status == 0) {
+					alert("Something went wrong, please check your credentials and the server address")
+				} else {
+					alert("error: " + xhr.status + " " + xhr.statusText);
+				}
 			}
 		}
 	}
