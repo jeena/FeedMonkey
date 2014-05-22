@@ -189,8 +189,6 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
 				alert("Reached maximum memory by app" + e.name + " " +e.message +". We will keep working in anycase with:" + localStorage.unread_articles.length);
 			}
 			this.populateList();
-		} else {
-			alert("Downloaded: " + this.unread_articles.length + " articles. Reached: " + localStorage.unread_articles.length + " bytes");
 		}
 	}
 };
