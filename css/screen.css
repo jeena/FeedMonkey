@@ -140,20 +140,21 @@ section > footer {
 
 img {
 	max-width: 100% !important;
-	height: auto;
+}
+
+#full > article pre {
+	overflow: auto;
 }
 
 @media screen and (width: 320px) {
-	#full > article * , #full > article pre {
+	#full > article > * {
 		max-width: 300px !important;
-		overflow: auto;
 	}
 }
 
 @media screen and (width: 480px) {
-	#full > article * {
+	#full > article > * {
 		max-width: 460px !important;
-		overflow: auto;
 	}
 }
 
