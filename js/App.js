@@ -84,11 +84,13 @@ App.prototype.after_login = function(backend) {
 	}
 
 	// set up swiping
-	jester($("#full")).flick(function(touches, direction) {
-		if(direction == "left") _this.showNext();
-		else _this.showPrevious();
-	});
-
+	var options = {
+		dragLockToAxis: true,
+		dragBlockHorizontal: true
+	};
+	var hammertime = new Hammer($("#full"), options);
+	hammertime.on("swipeleft", function(ev){ _this.showNext() });
+	hammertime.on("swiperight", function(ev){ _this.showPrevious(); });
 
 	this.changeToPage("#list");
 
