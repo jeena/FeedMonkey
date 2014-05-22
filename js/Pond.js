@@ -106,6 +106,8 @@ Pond.prototype.getUnreadFeeds = function(callback, skip) {
 Pond.prototype.getFeeds = function(callback) {
 	var _this = this;
 	this.doOperation("GET", "subscriptions", {}, function(feeds) {
+
+		if(!feeds) return;
 		
 		_this.feeds = {};
 		for (var i = 0; i < feeds.length; i++) {
@@ -193,7 +195,7 @@ Pond.prototype.setArticleUnstarred = function(articles, callback) {
 }
 
 Pond.prototype.logOut = function() {
-	this.doOperation("auth/sessions/" + this.session_token );
+	this.doOperation("DELETE", "auth/sessions/" + this.session_token );
 	localStorage.feeds = null;
 }
 
