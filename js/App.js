@@ -260,6 +260,7 @@ App.prototype.updatePieChart = function() {
 
 	var bg = window.getComputedStyle($("body"), null).backgroundColor;
 	var fg = window.getComputedStyle($(".bar"), null).backgroundColor;
+	var tx = window.getComputedStyle($(".bar"), null).color;
 
 	var myColor = [bg, fg];
 
@@ -284,7 +285,7 @@ App.prototype.updatePieChart = function() {
 
 		if(all > 0) {
 			ctx.font =  "12px FeuraSans, sans-serif";
-			ctx.fillStyle = "#fff";
+			ctx.fillStyle = tx;
 			ctx.textAlign = "center";
 			var text = unread + "/" + all;
 			var x = canvas.width / 2;
