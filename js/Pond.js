@@ -69,15 +69,15 @@ Pond.prototype.doOperation = function(method, operation, new_options, callback) 
 };
 
 
-Pond.prototype.reload = function(callback) {
+Pond.prototype.reload = function(callback,limit) {
  	var _this = this;
-	this.getFeeds(function() { _this.getUnreadFeeds(callback); });
+	this.getFeeds(function() { _this.getUnreadFeeds(callback,0,limit); });
  };
 
-Pond.prototype.getUnreadFeeds = function(callback, skip) {
+Pond.prototype.getUnreadFeeds = function(callback, skip, limit) {
 	var options = {
 		status: "unread",
-		limit: 100
+		limit: limit || 100
 	};
 
 	if(skip && skip.length > 0) {

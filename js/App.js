@@ -7,6 +7,13 @@ function App() {
 	if(!color) color = "red";
 	this.setColor(color);
 	this.fontChange();
+
+	var numArticles = localStorage.numArticles;
+	if(!numArticles) numArticles = 50;
+	this.numArticles(numArticles);
+	var maxDownload = localStorage.maxDownload;
+	if(!maxDownload) maxDownload = 500000;
+	this.maxDownload(maxDownload);
 };
 
 App.prototype.authenticate = function() {
@@ -101,6 +108,14 @@ App.prototype.after_login = function(backend) {
 	} else {
 		this.backend = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
 	}
+
+	var numArticles = localStorage.numArticles;
+	if(!numArticles) numArticles = 50;
+	this.numArticles(numArticles);
+	var maxDownload = localStorage.maxDownload;
+	if(!maxDownload) maxDownload = 500000;
+	this.maxDownload(maxDownload);
+
 	this.reload();
 };
 
@@ -139,7 +154,8 @@ App.prototype.setColor = function(color) {
 App.prototype.reload = function() {
 	this.unread_articles = [];
 	$("#all-read").innerHTML = "❌";
-	this.backend.reload(this.gotUnreadFeeds.bind(this));
+	var number=parseInt(localStorage.numArticles);
+	this.backend.reload(this.gotUnreadFeeds.bind(this),number);
 };
 
 App.prototype.gotUnreadFeeds = function(new_articles) {
@@ -157,11 +173,25 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
 		this.unread_articles = this.unread_articles.concat(new_articles);
 
 		if(new_articles.length > 0) {
-			this.backend.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles);
-		} else {
-			localStorage.unread_articles = JSON.stringify(this.unread_articles);
+			try {
+				//To check if when it fails it is the same
+				localStorage.unread_articles = JSON.stringify(this.unread_articles);
+				//alert("Size probando:"+probando.length)
+				var size = parseInt(localStorage.maxDownload);
+				if(localStorage.unread_articles.length < size) {
+					var num = parseInt(localStorage.numArticles);
+					this.backend.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles,num);
+				} else {
+					alert("Limit size reached: Downloaded: " + this.unread_articles.length + " articles. Reached: " + localStorage.unread_articles.length +" bytes");
+				}
+			}
+			catch (e) {
+				alert("Reached maximum memory by app" + e.name + " " +e.message +". We will keep working in anycase with:" + localStorage.unread_articles.length);
+			}
 			this.populateList();
-		}		
+		} else {
+			alert("Downloaded: " + this.unread_articles.length + " articles. Reached: " + localStorage.unread_articles.length + " bytes");
+		}
 	}
 };
 
@@ -447,5 +477,22 @@ App.prototype.fontChange = function(size) {
 		document.body.addClass("f" + i);
 	}
 
+};
 
+App.prototype.numArticles= function(askfor) {
+	if(askfor < 200 && askfor > 0) {
+		localStorage.numArticles=askfor;
+	}
+	else {
+		localStorage.numArticles=100;
+	}
+};
+
+App.prototype.maxDownload= function(maxdata) {
+	if(maxdata < 5000000 && maxdata > 100000) {
+		localStorage.maxDownload=maxdata;
+	}
+	else {
+		localStorage.maxDownload=500000;
+	}
 };

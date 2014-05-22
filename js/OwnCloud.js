@@ -65,18 +65,18 @@ OwnCloud.prototype.doOperation = function(method, operation, new_options, callba
 	xhr.send(body);
 }
 
-OwnCloud.prototype.reload = function(callback) {
+OwnCloud.prototype.reload = function(callback,limit) {
 	var _this = this;
-	this.getFeeds(function() { _this.getUnreadFeeds(callback); });
+	this.getFeeds(function() { _this.getUnreadFeeds(callback,0,limit); });
 };
 
-OwnCloud.prototype.getUnreadFeeds = function(callback, skip) {
+OwnCloud.prototype.getUnreadFeeds = function(callback, skip, limit) {
 	if(skip) {
 		skip = skip[skip.length - 1].id;
 	}
 
 	var options = {
-		batchSize: 700,
+		batchSize: limit || 700,
 		offset: skip || 0,
 		type: 3,
 		id: 0,
