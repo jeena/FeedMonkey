@@ -150,13 +150,12 @@ TinyTinyRSS.prototype.setArticleUnstarred = function(article, callback) {
 };
 
 TinyTinyRSS.prototype.append = function(key, array) {
-
 	var tmp = localStorage[key];
 
 	if (typeof tmp !== "undefined") tmp = JSON.parse(tmp);
 	else tmp = [];
 
-	tmp.concat(options.items);
+	tmp.concat(array);
 	localStorage[key] = JSON.stringify(tmp);
 };
 

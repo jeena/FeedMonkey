@@ -15,7 +15,13 @@ Pond.prototype.onoffline = function() {
 };
 
 Pond.prototype.ononline = function() {
-	// Send read
+	["read", "unread"].forEach(function(type) {
+		var articles = localStorage[type + "_articles"];
+		if(articles) {
+			var callback = function(ok) { if(ok) localStorage[type + "_articles"] = null }
+			this.call("setArticles" + type.capitalize(), [JSON.parse(articles), callback]);
+		}
+	});
 };
 
 Pond.prototype.toString = function() {
@@ -159,11 +165,11 @@ Pond.prototype.setArticleStatus = function(article, callback, status) {
 
 	var url = "subscriptions/" + article.feed_id + "/articles/" + article.id
 
-	if (navigator.onLine) this.doOperation("PUT", url, options, callback);
-	else {
-		this.append("unread_articles", articles);
+	if (navigator.onLine) {
+		this.doOperation("PUT", url, options, callback);
+	} else {
+		this.append(status + "_articles", articles);
 	}
-	
 }
 
 Pond.prototype.setArticleRead = function(article, callback) {
@@ -181,7 +187,7 @@ Pond.prototype.setArticlesRead = function(articles, callback) {
 }
 
 Pond.prototype.setArticlesUnread = function(articles, callback) {
-		articles.forEach(function(article) {
+	articles.forEach(function(article) {
 		this.setArticleStatus(article, callback, "unread");
 	})
 }
@@ -193,6 +199,16 @@ Pond.prototype.setArticleStarred = function(article, callback) {
 Pond.prototype.setArticleUnstarred = function(articles, callback) {
 	// not implemented yet in Pond
 }
+
+TinyTinyRSS.prototype.append = function(key, array) {
+	var tmp = localStorage[key];
+
+	if (typeof tmp !== "undefined") tmp = JSON.parse(tmp);
+	else tmp = [];
+
+	tmp.concat(array);
+	localStorage[key] = JSON.stringify(tmp);
+};
 
 Pond.prototype.logOut = function() {
 	this.doOperation("DELETE", "auth/sessions/" + this.session_token );
