@@ -1,6 +1,6 @@
 {
   "name": "FeedMonkey",
-  "description": "A TinyTinyRSS mobile client with which you can read your RSS feeds and mark them as read on your server. Works also offline.",
+  "description": "A feed mobile client with which you can read your RSS feeds and mark them as read on your server. Works also offline.",
   "launch_path": "/index.html",
   "icons": {
     "58": "/img/icon-58.png",
@@ -15,9 +15,9 @@
   "type": "privileged",
   "permissions": {
     "systemXHR": {
-      "description": "Connection with your own TinyTinyRSS server."
+      "description": "Connection with your own server."
     }
   },
   "installs_allowed_from": ["*"],
-  "version": "0.3.0_iss30"
+  "version": "0.4.0"
 }
