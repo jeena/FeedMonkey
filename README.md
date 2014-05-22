@@ -11,4 +11,4 @@ A RSS mobile client with which you can read your RSS feeds and mark them as read
 - Works also offline.
 - You can chose between 4 fresh color schemes.
 
-To use this RSS client to read your feeds you need a backend server. As a backend you can use [TinyTinyRSS](http://tt-rss.org) or [ownCloud News](http://apps.owncloud.com/content/show.php/News?content=158434). This is not a stand alone application.
+To use this RSS client to read your feeds you need a backend server. As a backend you can use [TinyTinyRSS](http://tt-rss.org), [ownCloud News](http://apps.owncloud.com/content/show.php/News?content=158434) or [Pond](https://github.com/ArturoVM/pond#pond). This is not a stand alone application.
