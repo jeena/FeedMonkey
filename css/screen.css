@@ -138,8 +138,14 @@ section > footer {
 	box-sizing: border-box;
 }
 
+figure {
+	margin: 0;
+	padding: 0;
+}
+
 img {
 	max-width: 100% !important;
+	height: auto;
 }
 
 #full > article pre {
@@ -147,13 +153,13 @@ img {
 }
 
 @media screen and (width: 320px) {
-	#full > article > * {
+	#full > article * {
 		max-width: 300px !important;
 	}
 }
 
 @media screen and (width: 480px) {
-	#full > article > * {
+	#full > article * {
 		max-width: 460px !important;
 	}
 }
