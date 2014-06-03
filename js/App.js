@@ -96,8 +96,8 @@ App.prototype.after_login = function(backend) {
 		dragBlockHorizontal: true
 	};
 	var hammertime = new Hammer($("#full"), options);
-	hammertime.on("swipeleft", function(ev){ _this.showNext() });
-	hammertime.on("swiperight", function(ev){ _this.showPrevious(); });
+	hammertime.on("dragleft swipeleft", function(ev){ ev.gesture.preventDefault(); _this.showNext() });
+	hammertime.on("dragright swiperight", function(ev){ ev.gesture.preventDefault(); _this.showPrevious(); });
 
 	this.changeToPage("#list");
 
