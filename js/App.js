@@ -96,8 +96,10 @@ App.prototype.after_login = function(backend) {
 		dragBlockHorizontal: true
 	};
 	var hammertime = new Hammer($("#full"), options);
-	hammertime.on("dragleft swipeleft", function(ev){ ev.gesture.preventDefault(); _this.showNext() });
-	hammertime.on("dragright swiperight", function(ev){ ev.gesture.preventDefault(); _this.showPrevious(); });
+	hammertime.on("dragleft", function(ev){ ev.gesture.preventDefault(); });
+	hammertime.on("dragright", function(ev){ ev.gesture.preventDefault(); });
+	hammertime.on("swipeleft", function(ev){ _this.showNext(); ev.gesture.preventDefault(); });
+	hammertime.on("swiperight", function(ev){ _this.showPrevious(); ev.gesture.preventDefault(); });
 
 	this.changeToPage("#list");
 
@@ -176,7 +178,6 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
 			try {
 				//To check if when it fails it is the same
 				localStorage.unread_articles = JSON.stringify(this.unread_articles);
-				//alert("Size probando:"+probando.length)
 				var size = parseInt(localStorage.maxDownload);
 				if(localStorage.unread_articles.length < size) {
 					var num = parseInt(localStorage.numArticles);
@@ -316,6 +317,8 @@ App.prototype.showFull = function(article, slide_back) {
 		$(page_id + " .author").innerHTML = "&ndash; " + article.author; 
 
 	$(page_id + " .article").innerHTML = article.content;
+
+	// Open all links in browser
 	$$(page_id + " .article a").forEach(function(o, i) {
 		o.target = "_blank";
 	});
