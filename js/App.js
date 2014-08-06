@@ -168,9 +168,8 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
                 // user to login again if it is the case.
                 // This can happen with TT-RSS backend
                 if (new_articles.error && new_articles.error === "NOT_LOGGED_IN") {
-                    $("#url").value = localStorage.server_url;
-                    $("#login form").backend[0].checked = true;
                     alert("Your TinyTinyRSS session has expired. Please login again");
+                    this.login.fillLoginFormFromLocalSotrage();
                     this.login.log_in();
                 }
                 else {
