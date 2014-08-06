@@ -123,7 +123,7 @@ Login.prototype.authenticate = function(e) {
 	return false;
 };
 
-Login.prototype.fillLoginFormFromLocalSotrage = function() {
+Login.prototype.fillLoginFormFromLocalStorage = function() {
         $("#url").value = localStorage.server_url;
         $("#un").value = localStorage.username;
         var backendName = localStorage.backend;
@@ -139,7 +139,7 @@ Login.prototype.fillLoginFormFromLocalSotrage = function() {
 }
 
 Login.prototype.log_out = function() {
-        this.fillLoginFormFromLocalSotrage();
+        this.fillLoginFormFromLocalStorage();
 	localStorage.removeItem("server_url");
 	localStorage.removeItem("session_id");
 	localStorage.removeItem("unread_articles");
