@@ -162,35 +162,47 @@ App.prototype.reload = function() {
 
 App.prototype.gotUnreadFeeds = function(new_articles) {
 
-	if(new_articles == null || !this.validate(new_articles)) { // on error load the saved unread articles.
-		
-		var old_articles = localStorage.unread_articles;
-		if(old_articles) {
-			this.unread_articles = JSON.parse(old_articles);	
-		}
-		this.populateList();
-
+	if(new_articles == null || !this.validate(new_articles)) {
+            
+                // Check if we did not get a NOT_LOGGED_IN error, and ask the
+                // user to login again if it is the case.
+                // This can happen with TT-RSS backend
+                if (new_articles.error && new_articles.error === "NOT_LOGGED_IN") {
+                    $("#url").value = localStorage.server_url;
+                    $("#login form").backend[0].checked = true;
+                    alert("Your TinyTinyRSS session has expired. Please login again");
+                    this.login.log_in();
+                }
+                else {
+                    // On other errors, load the saved unread articles.
+                    var old_articles = localStorage.unread_articles;
+                    if(old_articles) {
+                            this.unread_articles = JSON.parse(old_articles);	
+                    }
+                    this.populateList();
+                }
+                
 	} else {
+            
+                this.unread_articles = this.unread_articles.concat(new_articles);
 
-		this.unread_articles = this.unread_articles.concat(new_articles);
-
-		if(new_articles.length > 0) {
-			try {
-				//To check if when it fails it is the same
-				localStorage.unread_articles = JSON.stringify(this.unread_articles);
-				var size = parseInt(localStorage.maxDownload);
-				if(localStorage.unread_articles.length < size) {
-					var num = parseInt(localStorage.numArticles);
-					this.backend.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles,num);
-				} else {
-					alert("Limit size reached: Downloaded: " + this.unread_articles.length + " articles. Reached: " + localStorage.unread_articles.length +" bytes");
-				}
-			}
-			catch (e) {
-				alert("Reached maximum memory by app " + e.name + " " + e.message + ". We will keep working in anycase with: " + localStorage.unread_articles.length);
-			}
-			this.populateList();
-		}
+                if(new_articles.length > 0) {
+                    try {
+                                //To check if when it fails it is the same
+                                localStorage.unread_articles = JSON.stringify(this.unread_articles);
+                                var size = parseInt(localStorage.maxDownload);
+                                if(localStorage.unread_articles.length < size) {
+                                    var num = parseInt(localStorage.numArticles);
+                                        this.backend.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles,num);
+                                } else {
+                                    alert("Limit size reached: Downloaded: " + this.unread_articles.length + " articles. Reached: " + localStorage.unread_articles.length +" bytes");
+                                }
+                        }
+                        catch (e) {
+                            alert("Reached maximum memory by app " + e.name + " " + e.message + ". We will keep working in anycase with: " + localStorage.unread_articles.length);
+                        }
+                        this.populateList();
+                }
 	}
 };
 
