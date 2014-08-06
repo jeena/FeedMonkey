@@ -124,8 +124,14 @@ Login.prototype.authenticate = function(e) {
 };
 
 Login.prototype.fillLoginFormFromLocalStorage = function() {
-        $("#url").value = localStorage.server_url;
-        $("#un").value = localStorage.username;
+        var serverUrl = localStorage.server_url;
+        if (serverUrl) {
+            $("#url").value = serverUrl;
+        }
+        var userName = localStorage.username;
+        if (userName) {
+            $("#un").value = userName;
+        }
         var backendName = localStorage.backend;
         if (backendName === "TinyTinyRSS") {
             $("#login form").backend[0].checked = true;
