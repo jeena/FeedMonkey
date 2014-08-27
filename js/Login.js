@@ -67,6 +67,7 @@ Login.prototype.authenticate = function(e) {
 			if(data.version) {
 				var auth = btoa(user + ':' + password);
 				localStorage.server_url = server_url;
+                                localStorage.username = user;
 				localStorage.session_id = auth;
 				localStorage.backend = "OwnCloud";
 				_this.app.after_login(localStorage.backend);
@@ -83,6 +84,7 @@ Login.prototype.authenticate = function(e) {
 		Pond.login(server_url, user, password, function(data) {
 			if(data.session_token) {
 				localStorage.server_url = server_url;
+                                localStorage.username = user;
 				localStorage.session_id = data.session_token;
 				localStorage.backend = "Pond";
 				_this.app.after_login(localStorage.backend);
@@ -106,6 +108,7 @@ Login.prototype.authenticate = function(e) {
 
 			} else {
 				localStorage.server_url = server_url;
+                                localStorage.username = user;
 				localStorage.session_id = data.session_id;
 				localStorage.backend = "TinyTinyRSS";
 				_this.app.after_login(localStorage.backend);
@@ -120,7 +123,29 @@ Login.prototype.authenticate = function(e) {
 	return false;
 };
 
+Login.prototype.fillLoginFormFromLocalStorage = function() {
+        var serverUrl = localStorage.server_url;
+        if (serverUrl) {
+            $("#url").value = serverUrl;
+        }
+        var userName = localStorage.username;
+        if (userName) {
+            $("#un").value = userName;
+        }
+        var backendName = localStorage.backend;
+        if (backendName === "TinyTinyRSS") {
+            $("#login form").backend[0].checked = true;
+        }
+        else if (backendName === "OwnCloud") {
+            $("#login form").backend[1].checked = true;
+        }
+        else if (backendName === "Pond") {
+            $("#login form").backend[2].checked = true;
+        }
+}
+
 Login.prototype.log_out = function() {
+        this.fillLoginFormFromLocalStorage();
 	localStorage.removeItem("server_url");
 	localStorage.removeItem("session_id");
 	localStorage.removeItem("unread_articles");
