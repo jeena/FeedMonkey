@@ -59,6 +59,7 @@ OwnCloud.prototype.doOperation = function(method, operation, new_options, callba
 		}
 	}
 	xhr.open(method, url, true);
+	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 	xhr.withCredentials = true;
 	xhr.setRequestHeader('Authorization', 'Basic ' + this.session_id);
 	var body = JSON.stringify(options);
