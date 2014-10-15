@@ -54,6 +54,8 @@ App.prototype.after_login = function(backend) {
 			_this.toggleCurrentUnread();
 		} else if(url == "#starred") {
 			_this.toggleStarred();
+		} else if(url == "#published") {
+			_this.togglePublished();
 		} else if(url == "#logout") {
 			_this.logout();
 		} else if(url == "#reset-info") {
@@ -109,6 +111,7 @@ App.prototype.after_login = function(backend) {
 		this.backend = new Pond(this, localStorage.server_url, localStorage.session_id)
 	} else {
 		this.backend = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
+		$("#setpublished").addClass("active");
 	}
 
 	var numArticles = localStorage.numArticles;
@@ -346,6 +349,12 @@ App.prototype.showFull = function(article, slide_back) {
 		$("#setstarred").innerHTML = "&#9734;";
 	}
 
+	if(article.published) {
+		$("#setpublished").innerHTML = "&#59153;";
+	} else {
+		$("#setpublished").innerHTML = "&#9729;";
+	}
+
 };
 
 App.prototype.showNext = function() {
@@ -451,6 +460,23 @@ App.prototype.toggleStarred = function() {
 		this.updateList();
 		this.backend.setArticleUnstarred(article);
 		$("#setstarred").innerHTML = "&#9734;";
+	}
+
+};
+
+App.prototype.togglePublished = function() {
+	var article = this.unread_articles[this.currentIndex];
+	if(!article) return; // happens if we're not on a full article site
+	
+	if(!article.published) {
+		article.published = true;
+		this.backend.setArticlePublished(article);
+		$("#setpublished").innerHTML = "&#59153;";
+	}
+	else {
+		article.published = false;
+		this.backend.setArticleUnpublished(article);
+		$("#setpublished").innerHTML = "&#9729;";
 	}
 
 };
