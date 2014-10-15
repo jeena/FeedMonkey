@@ -13,7 +13,7 @@ TinyTinyRSS.prototype.onoffline = function() {
 
 TinyTinyRSS.prototype.ononline = function() {
 
-	["read", "unread", "starred", "unstarred"].forEach(function(type) {
+	["read", "unread", "starred", "unstarred", "published", "unpublished"].forEach(function(type) {
 		var articles = localStorage[type + "_articles"];
 		if(articles) {
 			var callback = function(ok) { if(ok) localStorage[type + "_articles"] = null }
@@ -147,6 +147,44 @@ TinyTinyRSS.prototype.setArticlesUnstarred = function(articles, callback) {
 
 TinyTinyRSS.prototype.setArticleUnstarred = function(article, callback) {
 	this.setArticlesUnstarred([article], callback);
+};
+
+TinyTinyRSS.prototype.setArticlesPublished = function(articles, callback) {
+
+	var options = {
+		article_ids: articles.map(function(o) { return o.id }).join(","),
+		mode: 1,
+		field: 1
+	};
+
+	if (navigator.onLine) {
+		this.doOperation("updateArticle", options);
+	} else {
+		this.append("published_articles", articles);
+	}
+};
+
+TinyTinyRSS.prototype.setArticlePublished = function(article, callback) {
+	this.setArticlesPublished([article], callback);
+};
+
+TinyTinyRSS.prototype.setArticlesUnpublished = function(articles, callback) {
+
+	var options = {
+		article_ids: articles.map(function(o) { return o.id}).join(","),
+		mode: 0,
+		field: 1
+	};
+
+	if (navigator.onLine) {
+		this.doOperation("updateArticle", options, callback);
+	} else {
+		this.append("unpublished_articles", articles);
+	}
+};
+
+TinyTinyRSS.prototype.setArticleUnpublished = function(article, callback) {
+	this.setArticlesUnpublished([article], callback);
 };
 
 TinyTinyRSS.prototype.append = function(key, array) {
