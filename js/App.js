@@ -111,7 +111,7 @@ App.prototype.after_login = function(backend) {
 		this.backend = new Pond(this, localStorage.server_url, localStorage.session_id)
 	} else {
 		this.backend = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
-		$("#setpublished").addClass("active");
+		$("#setpublished").removeClass("invisible");
 	}
 
 	var numArticles = localStorage.numArticles;
@@ -158,7 +158,7 @@ App.prototype.setColor = function(color) {
 
 App.prototype.reload = function() {
 	this.unread_articles = [];
-	$("#all-read").innerHTML = "❌";
+	$("#all-read").addClass('inactive');
 	var number=parseInt(localStorage.numArticles);
 	this.backend.reload(this.gotUnreadFeeds.bind(this),number);
 };
@@ -251,9 +251,9 @@ App.prototype.updateList = function() {
 	}, this);
 
 	if(unread > 0) {
-		$("#all-read").innerHTML = "❌";
+		$("#all-read").addClass('inactive');
 	} else {
-		$("#all-read").innerHTML = "✓";
+		$("#all-read").removeClass('inactive');
 	}
 
 	this.updatePieChart();
@@ -338,21 +338,21 @@ App.prototype.showFull = function(article, slide_back) {
 	});
 
 	if(article.unread) {
-		$("#setunread").innerHTML = "❌";
+		$("#setunread").addClass('inactive');
 	} else {
-		$("#setunread").innerHTML = "✓";
+		$("#setunread").removeClass('inactive');
 	}
 
-	if(article.marked) {
-		$("#setstarred").innerHTML = "&#9733;";
+	if(!article.marked) {
+		$("#setstarred").addClass('inactive');
 	} else {
-		$("#setstarred").innerHTML = "&#9734;";
+		$("#setstarred").removeClass('inactive');
 	}
 
-	if(article.published) {
-		$("#setpublished").innerHTML = "&#59153;";
+	if(!article.published) {
+		$("#setpublished").addClass('inactive');
 	} else {
-		$("#setpublished").innerHTML = "&#9729;";
+		$("#setpublished").removeClass('inactive');
 	}
 
 };
@@ -390,7 +390,7 @@ App.prototype.setCurrentRead = function() {
 
 	article.set_unread = false;
 
-	$("#setunread").innerHTML = "✓";
+	$("#setunread").removeClass('inactive');
 
 	this.updatePieChart();
 };
@@ -400,11 +400,11 @@ App.prototype.toggleCurrentUnread = function() {
 	if(article.unread) {
 		article.unread = false;
 		article.set_unread = false;
-		$("#setunread").innerHTML = "✓";
+		$("#setunread").removeClass('inactive');
 	} else {
 		article.unread = true;
 		article.set_unread = true;
-		$("#setunread").innerHTML = "❌";
+		$("#setunread").addClass('inactive');
 	}
 
 	this.updateList();
@@ -413,7 +413,7 @@ App.prototype.toggleCurrentUnread = function() {
 
 App.prototype.toggleAllRead = function() {
 
-	if($("#all-read").innerHTML == "❌") { // set all read
+	if($("#all-read").hasClass('inactive')) { // set all read
 
 		var articles = [];
 		for (var i = 0; i < this.unread_articles.length; i++) {
@@ -422,7 +422,7 @@ App.prototype.toggleAllRead = function() {
 			article.set_unread = false;
 			articles.push(article);
 		}
-		$("#all-read").innerHTML = "&#10003;";
+		$("#all-read").removeClass('inactive');
 
 		this.updateList();
 
@@ -437,7 +437,7 @@ App.prototype.toggleAllRead = function() {
 			article.set_unread = false;
 			articles.push(article);
 		}
-		$("#all-read").innerHTML = "&#10060;";
+		$("#all-read").addClass('inactive');
 		this.updateList();
 
 		this.backend.setArticlesUnread(articles);
@@ -453,13 +453,13 @@ App.prototype.toggleStarred = function() {
 		article.marked = true;
 		this.updateList();
 		this.backend.setArticleStarred(article);
-		$("#setstarred").innerHTML = "&#9733;";
+		$("#setstarred").removeClass('inactive');
 	}
 	else {
 		article.marked = false;
 		this.updateList();
 		this.backend.setArticleUnstarred(article);
-		$("#setstarred").innerHTML = "&#9734;";
+		$("#setstarred").addClass('inactive');
 	}
 
 };
@@ -471,12 +471,12 @@ App.prototype.togglePublished = function() {
 	if(!article.published) {
 		article.published = true;
 		this.backend.setArticlePublished(article);
-		$("#setpublished").innerHTML = "&#59153;";
+		$("#setpublished").removeClass('inactive');
 	}
 	else {
 		article.published = false;
 		this.backend.setArticleUnpublished(article);
-		$("#setpublished").innerHTML = "&#9729;";
+		$("#setpublished").addClass('inactive');
 	}
 
 };

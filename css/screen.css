@@ -125,8 +125,8 @@ section > header h1 {
 	margin-left: 10px;
 }
 
-#setpublished {	display: none;}
-#setpublished.active {	display: inline;}
+.invisible {	display: none; }
+.inactive { opacity: 0.4; }
 
 .settings, .list {
 	float: left;
