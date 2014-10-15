@@ -350,9 +350,9 @@ App.prototype.showFull = function(article, slide_back) {
 	}
 
 	if(article.published) {
-		$("#setpublished").innerHTML = "U";
+		$("#setpublished").innerHTML = "&#59153;";
 	} else {
-		$("#setpublished").innerHTML = "P";
+		$("#setpublished").innerHTML = "&#9729;";
 	}
 
 };
@@ -471,12 +471,12 @@ App.prototype.togglePublished = function() {
 	if(!article.published) {
 		article.published = true;
 		this.backend.setArticlePublished(article);
-		$("#setpublished").innerHTML = "U";
+		$("#setpublished").innerHTML = "&#59153;";
 	}
 	else {
 		article.published = false;
 		this.backend.setArticleUnpublished(article);
-		$("#setpublished").innerHTML = "P";
+		$("#setpublished").innerHTML = "&#9729;";
 	}
 
 };
