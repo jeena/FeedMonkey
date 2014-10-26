@@ -40,10 +40,21 @@ App.prototype.after_login = function(backend) {
 		if(url == "#list") {
 			_this.setCurrentRead();
 			_this.changeToPage("#list");
+		} if(url.indexOf("#list-") == 0) {
+			var feedId = parseInt(url.replace("#list-", ""), 10);
+			_this.reload(feedId);
+			_this.changeToPage("#list");
 		} else if(url == "#reload") {
 			_this.reload();
 		} else if(url == "#settings") {
 			_this.changeToPage("#settings");
+		} else if(url == "#categories" || url == "#categories-back") {
+			_this.changeToPage("#categories");
+			var isComingBack = (url == "#categories-back") ? true : false;
+			_this.loadCategories(isComingBack);
+		} else if (url.indexOf("#categories-") == 0) {
+			var categoryId = parseInt(url.replace("#categories-", ""), 10);
+			_this.loadCategoryFeeds(categoryId);
 		} else if(url.indexOf("#color-") == 0) {
 			var color = url.replace("#color-", "");
 			_this.setColor(color);
@@ -103,8 +114,6 @@ App.prototype.after_login = function(backend) {
 	hammertime.on("swipeleft", function(ev){ _this.showNext(); ev.gesture.preventDefault(); });
 	hammertime.on("swiperight", function(ev){ _this.showPrevious(); ev.gesture.preventDefault(); });
 
-	this.changeToPage("#list");
-
 	if(backend == "OwnCloud") {
 		this.backend = new OwnCloud(this, localStorage.server_url, localStorage.session_id);
 	} else if (backend == "Pond") {
@@ -113,6 +122,9 @@ App.prototype.after_login = function(backend) {
 		this.backend = new TinyTinyRSS(this, localStorage.server_url, localStorage.session_id);
 		$("#setpublished").removeClass("invisible");
 	}
+
+	this.changeToPage("#categories");
+	this.loadCategories();
 
 	var numArticles = localStorage.numArticles;
 	if(!numArticles) numArticles = 50;
@@ -156,12 +168,24 @@ App.prototype.setColor = function(color) {
 	this.updatePieChart();
 };
 
-App.prototype.reload = function() {
+App.prototype.reload = function(feedId) {
 	this.unread_articles = [];
 	$("#all-read").addClass('inactive');
 	var number=parseInt(localStorage.numArticles);
-	this.backend.reload(this.gotUnreadFeeds.bind(this),number);
+	this.backend.reload(this.gotUnreadFeeds.bind(this),number, feedId);
 };
+
+App.prototype.loadCategories = function (isComingBack) {
+	if (this.categories && isComingBack != true) {
+		populateCategoryList();
+	} else {
+		this.backend.getCategories(this.gotCategories.bind(this));
+	}
+}
+
+App.prototype.loadCategoryFeeds = function (categoryId) {
+	this.backend.getFeedsByCategory(categoryId, this.gotCategoryFeeds.bind(this));
+}
 
 App.prototype.gotUnreadFeeds = function(new_articles) {
 
@@ -182,6 +206,7 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
                             this.unread_articles = JSON.parse(old_articles);	
                     }
                     this.populateList();
+                    this.isShowingFeeds = true;
                 }
                 
 	} else {
@@ -189,23 +214,41 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
                 this.unread_articles = this.unread_articles.concat(new_articles);
 
                 if(new_articles.length > 0) {
-                    try {
-                                //To check if when it fails it is the same
-                                localStorage.unread_articles = JSON.stringify(this.unread_articles);
-                                var size = parseInt(localStorage.maxDownload);
-                                if(localStorage.unread_articles.length < size) {
-                                    var num = parseInt(localStorage.numArticles);
-                                        this.backend.getUnreadFeeds(this.gotUnreadFeeds.bind(this), this.unread_articles,num);
-                                } else {
-                                    alert("Limit size reached: Downloaded: " + this.unread_articles.length + " articles. Reached: " + localStorage.unread_articles.length +" bytes");
-                                }
-                        }
-                        catch (e) {
-                            alert("Reached maximum memory by app " + e.name + " " + e.message + ". We will keep working in anycase with: " + localStorage.unread_articles.length);
-                        }
-                        this.populateList();
+                    this.populateList();
+                    this.isShowingFeeds = true;
                 }
 	}
+};
+
+App.prototype.gotCategories = function (categories) {
+	if (!categories) {
+		//FIXME this is repeated code, so create a function for it
+		// Check if we did not get a NOT_LOGGED_IN error, and ask the
+        // user to login again if it is the case.
+        // This can happen with TT-RSS backend
+        if (new_articles.error && new_articles.error === "NOT_LOGGED_IN") {
+            alert("Your TinyTinyRSS session has expired. Please login again");
+            this.login.fillLoginFormFromLocalStorage();
+            this.login.log_in();
+        }
+	} else {
+		this.categories = categories;
+        if(categories.length > 0) {
+            try {
+                //To check if when it fails it is the same
+                localStorage.categories = JSON.stringify(this.categories);
+            }
+            catch (e) {
+                alert("Reached maximum memory by app " + e.name + " " + e.message + ". We will keep working in anycase with: " + localStorage.categories.length);
+            }
+			this.populateCategoryList();
+        }
+	}
+};
+
+App.prototype.gotCategoryFeeds = function (feeds) {
+	this.feeds = feeds;
+	this.populateFeedList();
 };
 
 App.prototype.validate = function(articles) {
@@ -257,6 +300,34 @@ App.prototype.updateList = function() {
 	}
 
 	this.updatePieChart();
+};
+
+App.prototype.populateCategoryList = function () {
+	var html_str = "";
+	for (var i = 0; i < this.categories.length; i++) {
+		var category = this.categories[i];
+		html_str += "<li>";
+		html_str += "<a href='#categories-"+category.id+"'>";
+		html_str += "<p class='title'>" + category.title + "</p>";
+		html_str += "</a>";
+		html_str += "</li>";
+	}
+	
+	$("#categories ul").innerHTML = html_str;
+};
+
+App.prototype.populateFeedList = function () {
+	var html_str = "";
+	for (var i = 0; i < this.feeds.length; i++) {
+		var feed = this.feeds[i];
+		html_str += "<li>";
+		html_str += "<a href='#list-"+feed.id+"'>";
+		html_str += "<p class='title'>" + feed.title + "</p>";
+		html_str += "</a>";
+		html_str += "</li>";
+	}
+	
+	$("#categories ul").innerHTML = html_str;
 };
 
 App.prototype.updatePieChart = function() {

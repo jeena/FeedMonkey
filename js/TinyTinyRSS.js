@@ -54,23 +54,33 @@ TinyTinyRSS.prototype.doOperation = function(operation, new_options, callback) {
 	xhr.send(JSON.stringify(options));
 }
 
-TinyTinyRSS.prototype.reload = function(callback,limit) {
-	this.getUnreadFeeds(callback, 0, limit);
+TinyTinyRSS.prototype.reload = function(callback,limit, feedId) {
+	this.getUnreadFeeds(callback, 0, limit, feedId);
 };
 
-TinyTinyRSS.prototype.getUnreadFeeds = function(callback, skip, limit) {
+TinyTinyRSS.prototype.getUnreadFeeds = function(callback, skip, limit, feedId) {
 	skip = skip.length;
 	var options = {
 		show_excerpt: false,
 		view_mode: "unread",
 		show_content: true,
-		feed_id: -4,
+		feed_id: feedId || -4,
 		limit: limit || 0,
 		skip: skip || 0
 	};
 
 	this.doOperation("getHeadlines", options, callback);
 }
+
+TinyTinyRSS.prototype.getFeedsByCategory = function (categoryId, callback) {
+	var options = {
+		cat_id: categoryId,
+		unread_only: true,
+		include_nested: false
+	};
+
+	this.doOperation("getFeeds", options, callback);
+};
 
 TinyTinyRSS.prototype.setArticlesRead = function(articles, callback) {
 
@@ -186,6 +196,15 @@ TinyTinyRSS.prototype.setArticlesUnpublished = function(articles, callback) {
 TinyTinyRSS.prototype.setArticleUnpublished = function(article, callback) {
 	this.setArticlesUnpublished([article], callback);
 };
+
+TinyTinyRSS.prototype.getCategories = function (callback) {
+	var options = {
+		unread_only: true,
+		enable_nested: false,
+		include_empty: false
+	};
+	this.doOperation("getCategories", options, callback);
+}
 
 TinyTinyRSS.prototype.append = function(key, array) {
 	var tmp = localStorage[key];
