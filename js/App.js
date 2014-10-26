@@ -44,6 +44,9 @@ App.prototype.after_login = function(backend) {
 			_this.reload();
 		} else if(url == "#settings") {
 			_this.changeToPage("#settings");
+		} else if(url == "#categories") {
+			_this.changeToPage("#categories");
+			_this.loadCategories();
 		} else if(url.indexOf("#color-") == 0) {
 			var color = url.replace("#color-", "");
 			_this.setColor(color);
@@ -163,6 +166,14 @@ App.prototype.reload = function() {
 	this.backend.reload(this.gotUnreadFeeds.bind(this),number);
 };
 
+App.prototype.loadCategories = function () {
+	if (this.categories) {
+		populateCategoryList();
+	} else {
+		this.backend.getCategories(this.gotCategories.bind(this));
+	}
+}
+
 App.prototype.gotUnreadFeeds = function(new_articles) {
 
 	if(new_articles == null || !this.validate(new_articles)) {
@@ -205,6 +216,32 @@ App.prototype.gotUnreadFeeds = function(new_articles) {
                         }
                         this.populateList();
                 }
+	}
+};
+
+App.prototype.gotCategories = function (categories) {
+	if (!categories) {
+		//FIXME this is repeated code, so create a function for it
+		// Check if we did not get a NOT_LOGGED_IN error, and ask the
+        // user to login again if it is the case.
+        // This can happen with TT-RSS backend
+        if (new_articles.error && new_articles.error === "NOT_LOGGED_IN") {
+            alert("Your TinyTinyRSS session has expired. Please login again");
+            this.login.fillLoginFormFromLocalStorage();
+            this.login.log_in();
+        }
+	} else {
+		this.categories = categories;
+        if(categories.length > 0) {
+            try {
+                //To check if when it fails it is the same
+                localStorage.categories = JSON.stringify(this.categories);
+            }
+            catch (e) {
+                alert("Reached maximum memory by app " + e.name + " " + e.message + ". We will keep working in anycase with: " + localStorage.categories.length);
+            }
+			this.populateCategoryList();
+        }
 	}
 };
 
@@ -257,6 +294,18 @@ App.prototype.updateList = function() {
 	}
 
 	this.updatePieChart();
+};
+
+App.prototype.populateCategoryList = function () {
+	var html_str = "";
+	for (var i = 0; i < this.categories.length; i++) {
+		var category = this.categories[i];
+		html_str += "<li>";
+		html_str += "<p class='title'>" + category.title + "</p>";
+		html_str += "</li>";
+	}
+	
+	$("#categories ul").innerHTML = html_str;
 };
 
 App.prototype.updatePieChart = function() {

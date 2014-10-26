@@ -187,6 +187,15 @@ TinyTinyRSS.prototype.setArticleUnpublished = function(article, callback) {
 	this.setArticlesUnpublished([article], callback);
 };
 
+TinyTinyRSS.prototype.getCategories = function (callback) {
+	var options = {
+		unread_only: true,
+		enable_nested: false,
+		include_empty: false
+	};
+	this.doOperation("getCategories", options, callback);
+}
+
 TinyTinyRSS.prototype.append = function(key, array) {
 	var tmp = localStorage[key];
 

@@ -171,7 +171,7 @@ canvas {
 	float: right;
 }
 
-#list ul {
+#list ul , #categories ul{
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
@@ -189,7 +189,7 @@ canvas {
 	opacity: .6;
 }
 
-#list h2 {
+#list h2{
 	margin: 0;
 	padding: 0;
 	font-weight: normal;
@@ -229,6 +229,52 @@ canvas {
 
 #list li.unread:after {
 	color: inherit;
+}
+
+#categories ul{
+	list-style-type: none;
+	margin: 0;
+}
+
+#categories p {
+	padding: 0;
+	font-weight: normal;
+	text-overflow: ellipsis;
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#categories li {
+	position: relative;
+	padding: 0 0 0 7px;
+}
+
+.red    #categories li { border-bottom: 1px solid #c0392b; }
+.white  #categories li { border-bottom: 1px solid #bdc3c7; }
+.blue   #categories li { border-bottom: 1px solid #2980b9; }
+.yellow #categories li { border-bottom: 1px solid #f39c12; }
+
+#categories li:after {
+	content: "";
+	position: absolute;
+	top: -18px;
+	right: 7px;
+	font-weight: 100;
+	font-size: 3em;
+	font-family: "Entypo";
+}
+
+.red    #categories li:after { color: #c0392b; }
+.white  #categories li:after { color: #bdc3c7; }
+.blue   #categories li:after { color: #2980b9; }
+.yellow #categories li:after { color: #f39c12; }
+
+#categories li > a {
+	display: block;
+	padding: 5px 25px 5px 10px;
+	text-decoration: none;
+	outline: none;
 }
 
 #full.active {
