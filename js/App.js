@@ -37,7 +37,7 @@ App.prototype.after_login = function(backend) {
 
 		var url = window.location.hash;
 
-		if(url == "#list") {
+		if (url == "#list") {
 			_this.setCurrentRead();
 			_this.changeToPage("#list");
 		} else if(url == "#reload") {
@@ -135,18 +135,26 @@ App.prototype.changeToPage = function(page) {
 
 	// FIXME
 	var active = $(".active");
-	if(active.id == "list") {
-		this.saveScrollTop = document.body.scrollTop;
+
+	// Save old position
+	if (active.id == "list") {
+		this.saveScrollTop = document.documentElement.scrollTop;
 	}
 
-	if(page == "#list") {
-		document.body.scrollTop = this.saveScrollTop;
-	} else {
-		window.scroll(0, 0);
-	}
-
+	// Switch displays
 	active.removeClass("active");
 	$(page).addClass("active");
+
+	if (page == "#list") {
+		var elem = document.documentElement;
+		var posit = this.saveScrollTop;
+
+		// Restore old position, after display settles
+		setTimeout(function() { elem.scrollTop = posit; }, 500);
+	} else {
+		// Else top of page
+		window.scroll(0, 0);
+	}
 };
 
 App.prototype.setColor = function(color) {
