@@ -273,8 +273,10 @@ App.prototype.populateList = function() {
 	    html_str += '<ul id=' + feedid + ' style="display: none;">'
 	    for (let artidx of byfeed[f.fid]) {
 		const article = ua[artidx];
-		html_str += "<li"+ (article.unread ?
-		    " class='unread'" : "") +">";
+		html_str += '<li' +
+		    ' id="art' + artidx.toString() + '"' +
+		    (article.unread ?  ' class="unread"' : '') +
+		    '>';
 		html_str += "<a href='#full-" + artidx + "'>";
 		html_str += "<h2>" + article.title + "</h2>";
 		if (article.excerpt) {
@@ -292,17 +294,21 @@ App.prototype.populateList = function() {
 };
 
 App.prototype.updateList = function() {
-	var unread = 0, artnum = 0;
-	$$("#list ul ul li").forEach(function(o, i) {
+	var unread = 0;
+	const ua = this.unread_articles, ual = ua.length;
 
-	    if (!this.unread_articles[artnum++].unread) {
-		o.removeClass("unread");
-	    }
-	    else {
+	// Walk "unread" articles, keep count of those still
+	//  unread and update display.
+	for (let i = 0; i < ual; ++i) {
+	    const art = ua[i];
+	    const e = document.getElementById("art" + i.toString());
+	    if (art.unread) {
+		e.addClass("unread");
 		unread++;
-		o.addClass("unread");
+	    } else {
+		e.removeClass("unread");
 	    }
-	}, this);
+	}
 
 	if (unread > 0) {
 	    $("#all-read").addClass('inactive');
