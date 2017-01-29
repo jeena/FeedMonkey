@@ -227,46 +227,52 @@ App.prototype.validate = function(articles) {
 	return false;
 };
 
+// Utility function to toggle feed content visibility
+function toggleFeed(feedid) {
+    var e = document.getElementById("feed" + feedid.toString());
+    if (e.style.display == "none") {
+	e.style.display = "";
+    } else {
+	e.style.display = "none";
+    }
+}
+
 App.prototype.populateList = function() {
 
-	// First pull all articles together from each distinct feed
-	var ua = this.unread_articles;
-	var newarts = [], byfeed = [];
-	while (ua.length > 0) {
-	    article = ua[0];
+	// Tabulate all articles, grouped by feed.
+	// Note that this.unread_articles[] can be growing even
+	//  as our user reads, so we have to leave it alone and
+	//  just point to the appropriate articles in situ.
+	const ua = this.unread_articles, ual = ua.length;
+	const byfeed = {}, feeds = [];
+	for (let x = 0; x < ual; ++x) {
+	    const article = ua[x];
 
-	    // Next feed ID
-	    var fid = article.feed_id;
-	    // Here's all the articles under that ID
-	    var feeds =
-		ua.filter( function(a) { return a.feed_id == fid; } );
-	    // Keep a list of them so it's easy to tabulate
-	    byfeed.push(feeds);
-
-	    // Add them on to the new unread_articles, so they're
-	    //  in order.
-	    newarts = newarts.concat(feeds);
-
-	    // Trim them off the old, unsorted article list
-	    ua = ua.filter( function(a) { return a.feed_id != fid; } );
+	    // Add this article to an existing feed list, or
+	    //  or start one for this feed ID.
+	    const fid = article.feed_id;
+	    if (fid in byfeed) {
+		byfeed[fid].push(x);
+	    } else {
+		byfeed[fid] = [x];
+		feeds.push( {"fid": fid, "name": article.feed_title} );
+	    }
 	}
-
-	// Make the reordered article list the "official" one
-	ua = this.unread_articles = newarts;
 
 	// Now build the article list; it's a <ul> of feeds,
 	//  then sub-<ul> of articles in that feed
-	var html_str = "";
-	var artidx = 0;
-	for (i = 0; i < byfeed.length; ++i) {
-	    var feed = byfeed[i];
+	let html_str = "";
+	for (let x = 0; x < feeds.length; ++x) {
+	    const xs = x.toString();
+	    const f = feeds[x];
+	    const feed = byfeed[f.fid];
 	    html_str += '<li><span' +
-		' onclick="return(toggleFeed(' + i.toString() + '));"' +
-		'>' + feed[0].feed_title + '</span>';
-	    var feedid = '"feed' + i.toString() + '"';
+		' onclick="return(toggleFeed(' + xs + '));"' +
+		'>' + f.name + '</span>';
+	    const feedid = '"feed' + xs + '"';
 	    html_str += '<ul id=' + feedid + ' style="display: none;">'
-	    for (var j = 0; j < feed.length; ++j) {
-		article = ua[artidx];
+	    for (let artidx of byfeed[f.fid]) {
+		const article = ua[artidx];
 		html_str += "<li"+ (article.unread ?
 		    " class='unread'" : "") +">";
 		html_str += "<a href='#full-" + artidx + "'>";
@@ -276,7 +282,6 @@ App.prototype.populateList = function() {
 			article.excerpt + "</p>";
 		}
 		html_str += "</a></li>";
-		artidx += 1;
 	    }
 	    html_str += "</ul></li>";
 	}
