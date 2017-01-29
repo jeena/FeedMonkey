@@ -260,8 +260,11 @@ App.prototype.populateList = function() {
 	var artidx = 0;
 	for (i = 0; i < byfeed.length; ++i) {
 	    var feed = byfeed[i];
-	    html_str += "<li>" + feed[0].feed_title;
-	    html_str += "<ul>";
+	    html_str += '<li><span' +
+		' onclick="return(toggleFeed(' + i.toString() + '));"' +
+		'>' + feed[0].feed_title + '</span>';
+	    var feedid = '"feed' + i.toString() + '"';
+	    html_str += '<ul id=' + feedid + ' style="display: none;">'
 	    for (var j = 0; j < feed.length; ++j) {
 		article = ua[artidx];
 		html_str += "<li"+ (article.unread ?

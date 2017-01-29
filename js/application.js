@@ -8,6 +8,15 @@ function debug(obj) {
 	alert(obj)
 }
 
+function toggleFeed(feedid) {
+    var e = document.getElementById("feed" + feedid.toString());
+    if (e.style.display == "none") {
+	e.style.display = "";
+    } else {
+	e.style.display = "none";
+    }
+}
+
 function $(obj) {
 	if(typeof obj == "string") return document.querySelector(obj);
 	else return obj;
