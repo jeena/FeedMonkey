@@ -22,9 +22,11 @@ App.prototype.authenticate = function() {
 
 App.prototype.after_login = function(backend) {
 
-	var request = window.navigator.mozApps.getSelf();
-	request.onsuccess = function() {
-		$("#version").innerHTML = request.result.manifest.version;
+	if (window.navigator.mozApps) {
+	    var request = window.navigator.mozApps.getSelf();
+	    request.onsuccess = function() {
+		    $("#version").innerHTML = request.result.manifest.version;
+	    }
 	}
 
 	var _this = this;
@@ -227,15 +229,53 @@ App.prototype.validate = function(articles) {
 
 App.prototype.populateList = function() {
 
+	// First pull all articles together from each distinct feed
+	var ua = this.unread_articles;
+	var newarts = [], byfeed = [];
+	while (ua.length > 0) {
+	    article = ua[0];
+
+	    // Next feed ID
+	    var fid = article.feed_id;
+	    // Here's all the articles under that ID
+	    var feeds =
+		ua.filter( function(a) { return a.feed_id == fid; } );
+	    // Keep a list of them so it's easy to tabulate
+	    byfeed.push(feeds);
+
+	    // Add them on to the new unread_articles, so they're
+	    //  in order.
+	    newarts = newarts.concat(feeds);
+
+	    // Trim them off the old, unsorted article list
+	    ua = ua.filter( function(a) { return a.feed_id != fid; } );
+	}
+
+	// Make the reordered article list the "official" one
+	ua = this.unread_articles = newarts;
+
+	// Now build the article list; it's a <ul> of feeds,
+	//  then sub-<ul> of articles in that feed
 	var html_str = "";
-	for (var i = 0; i < this.unread_articles.length; i++) {
-		var article = this.unread_articles[i];
-		html_str += "<li"+ (article.unread ? " class='unread'" : "") +">";
-		html_str += "<a href='#full-"+i+"'>";
-		html_str += "<p class='title'>" + article.feed_title + "</p>";
+	var artidx = 0;
+	for (i = 0; i < byfeed.length; ++i) {
+	    var feed = byfeed[i];
+	    html_str += "<li>" + feed[0].feed_title;
+	    html_str += "<ul>";
+	    for (var j = 0; j < feed.length; ++j) {
+		article = ua[artidx];
+		html_str += "<li"+ (article.unread ?
+		    " class='unread'" : "") +">";
+		html_str += "<a href='#full-" + artidx + "'>";
 		html_str += "<h2>" + article.title + "</h2>";
-		if(article.excerpt)	html_str += "<p class='excerpt'>" + article.excerpt + "</p>";
+		if (article.excerpt) {
+		    html_str += "<p class='excerpt'>" +
+			article.excerpt + "</p>";
+		}
 		html_str += "</a></li>";
+		artidx += 1;
+	    }
+	    html_str += "</ul></li>";
 	}
 	
 	$("#list ul").innerHTML = html_str;
@@ -244,22 +284,22 @@ App.prototype.populateList = function() {
 };
 
 App.prototype.updateList = function() {
-	var unread = 0;
-	$$("#list ul li").forEach(function(o, i) {
+	var unread = 0, artnum = 0;
+	$$("#list ul ul li").forEach(function(o, i) {
 
-		if(!this.unread_articles[i].unread) {
-			o.removeClass("unread");
-		}
-		else {
-			unread++;
-			o.addClass("unread");
-		}
+	    if (!this.unread_articles[artnum++].unread) {
+		o.removeClass("unread");
+	    }
+	    else {
+		unread++;
+		o.addClass("unread");
+	    }
 	}, this);
 
-	if(unread > 0) {
-		$("#all-read").addClass('inactive');
+	if (unread > 0) {
+	    $("#all-read").addClass('inactive');
 	} else {
-		$("#all-read").removeClass('inactive');
+	    $("#all-read").removeClass('inactive');
 	}
 
 	this.updatePieChart();

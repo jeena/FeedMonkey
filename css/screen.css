@@ -204,11 +204,11 @@ canvas {
 .blue   #list li { border-bottom: 1px solid #2980b9; }
 .yellow #list li { border-bottom: 1px solid #f39c12; }
 
-#list li:after {
+#list li li:after {
 	content: "";
 	position: absolute;
 	right: 7px;
-	top: 0.1em;
+	top: -0.2em;
 	font-weight: 100;
 	font-size: 3em;
 	font-family: "Entypo";
