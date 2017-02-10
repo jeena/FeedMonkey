@@ -129,6 +129,7 @@ App.prototype.after_login = function(backend) {
 App.prototype.logout = function() {
 	this.backend.logOut();
 	this.unread_articles = [];
+	this.next_articles = [];
 	this.populateList();
 	this.login.log_out();
 };
@@ -168,6 +169,7 @@ App.prototype.setColor = function(color) {
 
 App.prototype.reload = function() {
 	this.unread_articles = [];
+	this.next_articles = [];
 	$("#all-read").addClass('inactive');
 	var number=parseInt(localStorage.numArticles);
 	this.backend.reload(this.gotUnreadFeeds.bind(this),number);
@@ -262,6 +264,7 @@ App.prototype.populateList = function() {
 	// Now build the article list; it's a <ul> of feeds,
 	//  then sub-<ul> of articles in that feed
 	let html_str = "";
+	this.next_articles = [];
 	for (let x = 0; x < feeds.length; ++x) {
 	    const xs = x.toString();
 	    const f = feeds[x];
@@ -272,6 +275,7 @@ App.prototype.populateList = function() {
 	    const feedid = '"feed' + xs + '"';
 	    html_str += '<ul id=' + feedid + ' style="display: none;">'
 	    for (let artidx of byfeed[f.fid]) {
+		this.next_articles.push(artidx);
 		const article = ua[artidx];
 		html_str += '<li' +
 		    ' id="art' + artidx.toString() + '"' +
@@ -418,25 +422,38 @@ App.prototype.showFull = function(article, slide_back) {
 };
 
 App.prototype.showNext = function() {
-	this.setCurrentRead();
+    this.setCurrentRead();
 
-	if(this.currentIndex >= this.unread_articles.length - 1) {
-		this.goToList();
-	} else {
-		this.currentIndex++;
-		this.showFull(this.unread_articles[this.currentIndex], false);
-	}
+    const na = this.next_articles;
+    let curidx = na.indexOf(this.currentIndex);
+
+    // Huh, not listed?
+    if (curidx < 0) {
+	this.goToList();
+	return;
+    }
+
+    curidx += 1;
+    if (curidx >= na.length) {
+	this.goToList();
+    } else {
+	this.currentIndex = na[curidx];
+	this.showFull(this.unread_articles[this.currentIndex], false);
+    }
 };
 
 App.prototype.showPrevious = function() {
-	this.setCurrentRead();
+    this.setCurrentRead();
 
-	if(this.currentIndex <= 0) {
-		this.goToList();
-	} else {
-		this.currentIndex--;
-		this.showFull(this.unread_articles[this.currentIndex], true);
-	}
+    const na = this.next_articles;
+    const curidx = na.indexOf(this.currentIndex)-1;
+    if (curidx < 0) {
+	// This handles not found, and also no previous article
+	this.goToList();
+	return;
+    }
+    this.currentIndex = na[curidx];
+    this.showFull(this.unread_articles[this.currentIndex], true);
 };
 
 App.prototype.setCurrentRead = function() {
