@@ -22,9 +22,11 @@ App.prototype.authenticate = function() {
 
 App.prototype.after_login = function(backend) {
 
-	var request = window.navigator.mozApps.getSelf();
-	request.onsuccess = function() {
-		$("#version").innerHTML = request.result.manifest.version;
+	if (window.navigator.mozApps) {
+	    var request = window.navigator.mozApps.getSelf();
+	    request.onsuccess = function() {
+		    $("#version").innerHTML = request.result.manifest.version;
+	    }
 	}
 
 	var _this = this;
@@ -37,7 +39,7 @@ App.prototype.after_login = function(backend) {
 
 		var url = window.location.hash;
 
-		if(url == "#list") {
+		if (url == "#list") {
 			_this.setCurrentRead();
 			_this.changeToPage("#list");
 		} else if(url == "#reload") {
@@ -127,6 +129,7 @@ App.prototype.after_login = function(backend) {
 App.prototype.logout = function() {
 	this.backend.logOut();
 	this.unread_articles = [];
+	this.next_articles = [];
 	this.populateList();
 	this.login.log_out();
 };
@@ -135,18 +138,26 @@ App.prototype.changeToPage = function(page) {
 
 	// FIXME
 	var active = $(".active");
-	if(active.id == "list") {
-		this.saveScrollTop = document.body.scrollTop;
+
+	// Save old position
+	if (active.id == "list") {
+		this.saveScrollTop = document.documentElement.scrollTop;
 	}
 
-	if(page == "#list") {
-		document.body.scrollTop = this.saveScrollTop;
-	} else {
-		window.scroll(0, 0);
-	}
-
+	// Switch displays
 	active.removeClass("active");
 	$(page).addClass("active");
+
+	if (page == "#list") {
+		var elem = document.documentElement;
+		var posit = this.saveScrollTop;
+
+		// Restore old position, after display settles
+		setTimeout(function() { elem.scrollTop = posit; }, 500);
+	} else {
+		// Else top of page
+		window.scroll(0, 0);
+	}
 };
 
 App.prototype.setColor = function(color) {
@@ -158,6 +169,7 @@ App.prototype.setColor = function(color) {
 
 App.prototype.reload = function() {
 	this.unread_articles = [];
+	this.next_articles = [];
 	$("#all-read").addClass('inactive');
 	var number=parseInt(localStorage.numArticles);
 	this.backend.reload(this.gotUnreadFeeds.bind(this),number);
@@ -217,17 +229,67 @@ App.prototype.validate = function(articles) {
 	return false;
 };
 
+// Utility function to toggle feed content visibility
+function toggleFeed(feedid) {
+    var e = document.getElementById("feed" + feedid.toString());
+    if (e.style.display == "none") {
+	e.style.display = "";
+    } else {
+	e.style.display = "none";
+    }
+}
+
 App.prototype.populateList = function() {
 
-	var html_str = "";
-	for (var i = 0; i < this.unread_articles.length; i++) {
-		var article = this.unread_articles[i];
-		html_str += "<li"+ (article.unread ? " class='unread'" : "") +">";
-		html_str += "<a href='#full-"+i+"'>";
-		html_str += "<p class='title'>" + article.feed_title + "</p>";
+	// Tabulate all articles, grouped by feed.
+	// Note that this.unread_articles[] can be growing even
+	//  as our user reads, so we have to leave it alone and
+	//  just point to the appropriate articles in situ.
+	const ua = this.unread_articles, ual = ua.length;
+	const byfeed = {}, feeds = [];
+	for (let x = 0; x < ual; ++x) {
+	    const article = ua[x];
+
+	    // Add this article to an existing feed list, or
+	    //  or start one for this feed ID.
+	    const fid = article.feed_id;
+	    if (fid in byfeed) {
+		byfeed[fid].push(x);
+	    } else {
+		byfeed[fid] = [x];
+		feeds.push( {"fid": fid, "name": article.feed_title} );
+	    }
+	}
+
+	// Now build the article list; it's a <ul> of feeds,
+	//  then sub-<ul> of articles in that feed
+	let html_str = "";
+	this.next_articles = [];
+	for (let x = 0; x < feeds.length; ++x) {
+	    const xs = x.toString();
+	    const f = feeds[x];
+	    const feed = byfeed[f.fid];
+	    html_str += '<li><span' +
+		' onclick="return(toggleFeed(' + xs + '));"' +
+		'>' + f.name + '</span>';
+	    const feedid = '"feed' + xs + '"';
+	    html_str += '<ul id=' + feedid + ' style="display: none;">'
+	    for (let artidx of byfeed[f.fid]) {
+		this.next_articles.push(artidx);
+		const article = ua[artidx];
+		html_str += '<li' +
+		    ' id="art' + artidx.toString() + '"' +
+		    (article.unread ?  ' class="unread"' : '') +
+		    '>';
+		html_str += "<a href='#full-" + artidx + "'>";
 		html_str += "<h2>" + article.title + "</h2>";
-		if(article.excerpt)	html_str += "<p class='excerpt'>" + article.excerpt + "</p>";
+		if (article.excerpt) {
+		    html_str += "<p class='excerpt'>" +
+			article.excerpt + "</p>";
+		}
 		html_str += "</a></li>";
+	    }
+	    html_str += "</ul></li>";
 	}
 	
 	$("#list ul").innerHTML = html_str;
@@ -237,21 +299,25 @@ App.prototype.populateList = function() {
 
 App.prototype.updateList = function() {
 	var unread = 0;
-	$$("#list ul li").forEach(function(o, i) {
+	const ua = this.unread_articles, ual = ua.length;
 
-		if(!this.unread_articles[i].unread) {
-			o.removeClass("unread");
-		}
-		else {
-			unread++;
-			o.addClass("unread");
-		}
-	}, this);
+	// Walk "unread" articles, keep count of those still
+	//  unread and update display.
+	for (let i = 0; i < ual; ++i) {
+	    const art = ua[i];
+	    const e = document.getElementById("art" + i.toString());
+	    if (art.unread) {
+		e.addClass("unread");
+		unread++;
+	    } else {
+		e.removeClass("unread");
+	    }
+	}
 
-	if(unread > 0) {
-		$("#all-read").addClass('inactive');
+	if (unread > 0) {
+	    $("#all-read").addClass('inactive');
 	} else {
-		$("#all-read").removeClass('inactive');
+	    $("#all-read").removeClass('inactive');
 	}
 
 	this.updatePieChart();
@@ -356,25 +422,38 @@ App.prototype.showFull = function(article, slide_back) {
 };
 
 App.prototype.showNext = function() {
-	this.setCurrentRead();
+    this.setCurrentRead();
 
-	if(this.currentIndex >= this.unread_articles.length - 1) {
-		this.goToList();
-	} else {
-		this.currentIndex++;
-		this.showFull(this.unread_articles[this.currentIndex], false);
-	}
+    const na = this.next_articles;
+    let curidx = na.indexOf(this.currentIndex);
+
+    // Huh, not listed?
+    if (curidx < 0) {
+	this.goToList();
+	return;
+    }
+
+    curidx += 1;
+    if (curidx >= na.length) {
+	this.goToList();
+    } else {
+	this.currentIndex = na[curidx];
+	this.showFull(this.unread_articles[this.currentIndex], false);
+    }
 };
 
 App.prototype.showPrevious = function() {
-	this.setCurrentRead();
+    this.setCurrentRead();
 
-	if(this.currentIndex <= 0) {
-		this.goToList();
-	} else {
-		this.currentIndex--;
-		this.showFull(this.unread_articles[this.currentIndex], true);
-	}
+    const na = this.next_articles;
+    const curidx = na.indexOf(this.currentIndex)-1;
+    if (curidx < 0) {
+	// This handles not found, and also no previous article
+	this.goToList();
+	return;
+    }
+    this.currentIndex = na[curidx];
+    this.showFull(this.unread_articles[this.currentIndex], true);
 };
 
 App.prototype.setCurrentRead = function() {
